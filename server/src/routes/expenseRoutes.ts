@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import ExpenseModel from '../models/Expense';
-import AuditLogModel from '../models/AuditLog';
+import { getExpenses, saveExpense, saveAuditLog } from '../db';
 import { authenticateToken, requireRole } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -8,7 +7,7 @@ const router = Router();
 // Log Audit Action Helper
 async function logAudit(user: string, action: string, details: string) {
   try {
-    await AuditLogModel.create({ action, details, user, timestamp: new Date() });
+    await saveAuditLog({ user, action, details });
   } catch (err) {
     console.error('Audit log error:', err);
   }
@@ -17,7 +16,7 @@ async function logAudit(user: string, action: string, details: string) {
 // GET /expenses
 router.get('/', async (req, res) => {
   try {
-    const list = await ExpenseModel.find().lean();
+    const list = await getExpenses();
     res.json(list);
   } catch (err: any) {
     res.status(500).json({ success: false, message: err.message });
@@ -39,15 +38,18 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 
   try {
-    const expense = await ExpenseModel.create({
+    const expense = {
+      id: `EXP-${Math.floor(1000 + Math.random() * 9000)}`,
       expenseType: type || 'Miscellaneous',
       amount,
       driver: driverId,
       vehicle: vehicleId,
       paymentMode: 'Card',
-      status: 'pending',
+      status: 'pending' as const,
       remarks
-    });
+    };
+
+    await saveExpense(expense);
 
     await logAudit(operator, 'Expense Logged', `Logged expense of $${amount} for vehicle ${vehicleId}`);
 
@@ -66,10 +68,14 @@ router.patch('/:id/approve', authenticateToken, requireRole(['Admin', 'Financial
   const { id } = req.params;
   const operator = (req as any).user?.email || 'FinancialAnalyst';
   try {
-    const exp = await ExpenseModel.findById(id);
+    const expenses = await getExpenses();
+    const exp = expenses.find(e => e.id === id);
     if (!exp) return res.status(404).json({ success: false, message: 'Expense request not found.' });
 
-    await ExpenseModel.updateOne({ _id: id }, { status: 'approved', approvedBy: operator });
+    exp.status = 'approved';
+    exp.approvedBy = operator;
+    await saveExpense(exp);
+
     await logAudit(operator, 'Expense Approved', `Approved expense transaction ID: ${id}`);
     res.json({ success: true, message: 'Expense approved and added to accounting registers.' });
   } catch (err: any) {
@@ -82,10 +88,13 @@ router.patch('/:id/reject', authenticateToken, requireRole(['Admin', 'FinancialA
   const { id } = req.params;
   const operator = (req as any).user?.email || 'FinancialAnalyst';
   try {
-    const exp = await ExpenseModel.findById(id);
+    const expenses = await getExpenses();
+    const exp = expenses.find(e => e.id === id);
     if (!exp) return res.status(404).json({ success: false, message: 'Expense request not found.' });
 
-    await ExpenseModel.updateOne({ _id: id }, { status: 'rejected' });
+    exp.status = 'rejected';
+    await saveExpense(exp);
+
     await logAudit(operator, 'Expense Rejected', `Rejected expense transaction ID: ${id}`);
     res.json({ success: true, message: 'Expense request rejected.' });
   } catch (err: any) {

@@ -186,3 +186,23 @@ export interface DispatchRecommendation {
   matchScore: number;
   reasoning: string;
 }
+
+export interface AuditLog {
+  id: string;
+  action: string;
+  details: string;
+  user: string;
+  timestamp: string;
+}
+
+export interface Expense {
+  id: string;
+  expenseType: string;
+  amount: number;
+  driver: string;
+  vehicle: string;
+  paymentMode: string;
+  status: 'pending' | 'approved' | 'rejected';
+  remarks?: string;
+  approvedBy?: string;
+}

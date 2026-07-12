@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: transitops-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - transitops-network
+
+  transitops-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: transitops-server
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb://mongodb:27017/transitops
+      - JWT_SECRET=super_secret_transitops_token_key_2026
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    networks:
+      - transitops-network
+
+  transitops-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: transitops-client
+    ports:
+      - "80:80"
+    depends_on:
+      - transitops-server
+    networks:
+      - transitops-network
+
+volumes:
+  mongo-data:
+
+networks:
+  transitops-network:
+    driver: bridge

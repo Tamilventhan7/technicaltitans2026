@@ -1,10 +1,9 @@
 import { Router } from 'express';
-import { getTrips, getVehicles, getDrivers } from '../db';
+import { getTrips, getVehicles, getDrivers, saveAuditLog } from '../db';
 import VehicleModel from '../models/Vehicle';
 import DriverModel from '../models/Driver';
 import TripModel from '../models/Trip';
 import RewardModel from '../models/Reward';
-import AuditLogModel from '../models/AuditLog';
 import { interpolateRoute, findRouteWaypoints, HUBS } from '../simulation/routes-data';
 import { manualInjectIncident } from '../simulation/engine';
 import { authenticateToken, requireRole } from '../middleware/authMiddleware';
@@ -14,7 +13,7 @@ const router = Router();
 // Log Audit Action Helper
 async function logAudit(user: string, action: string, details: string) {
   try {
-    await AuditLogModel.create({ action, details, user, timestamp: new Date() });
+    await saveAuditLog({ user, action, details });
   } catch (err) {
     console.error('Audit log error:', err);
   }

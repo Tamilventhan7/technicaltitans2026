@@ -1,17 +1,13 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const Expense_1 = __importDefault(require("../models/Expense"));
-const AuditLog_1 = __importDefault(require("../models/AuditLog"));
+const db_1 = require("../db");
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const router = (0, express_1.Router)();
 // Log Audit Action Helper
 async function logAudit(user, action, details) {
     try {
-        await AuditLog_1.default.create({ action, details, user, timestamp: new Date() });
+        await (0, db_1.saveAuditLog)({ user, action, details });
     }
     catch (err) {
         console.error('Audit log error:', err);
@@ -20,7 +16,7 @@ async function logAudit(user, action, details) {
 // GET /expenses
 router.get('/', async (req, res) => {
     try {
-        const list = await Expense_1.default.find().lean();
+        const list = await (0, db_1.getExpenses)();
         res.json(list);
     }
     catch (err) {
@@ -40,7 +36,8 @@ router.post('/', authMiddleware_1.authenticateToken, async (req, res) => {
         });
     }
     try {
-        const expense = await Expense_1.default.create({
+        const expense = {
+            id: `EXP-${Math.floor(1000 + Math.random() * 9000)}`,
             expenseType: type || 'Miscellaneous',
             amount,
             driver: driverId,
@@ -48,7 +45,8 @@ router.post('/', authMiddleware_1.authenticateToken, async (req, res) => {
             paymentMode: 'Card',
             status: 'pending',
             remarks
-        });
+        };
+        await (0, db_1.saveExpense)(expense);
         await logAudit(operator, 'Expense Logged', `Logged expense of $${amount} for vehicle ${vehicleId}`);
         res.status(201).json({
             success: true,
@@ -65,10 +63,13 @@ router.patch('/:id/approve', authMiddleware_1.authenticateToken, (0, authMiddlew
     const { id } = req.params;
     const operator = req.user?.email || 'FinancialAnalyst';
     try {
-        const exp = await Expense_1.default.findById(id);
+        const expenses = await (0, db_1.getExpenses)();
+        const exp = expenses.find(e => e.id === id);
         if (!exp)
             return res.status(404).json({ success: false, message: 'Expense request not found.' });
-        await Expense_1.default.updateOne({ _id: id }, { status: 'approved', approvedBy: operator });
+        exp.status = 'approved';
+        exp.approvedBy = operator;
+        await (0, db_1.saveExpense)(exp);
         await logAudit(operator, 'Expense Approved', `Approved expense transaction ID: ${id}`);
         res.json({ success: true, message: 'Expense approved and added to accounting registers.' });
     }
@@ -81,10 +82,12 @@ router.patch('/:id/reject', authMiddleware_1.authenticateToken, (0, authMiddlewa
     const { id } = req.params;
     const operator = req.user?.email || 'FinancialAnalyst';
     try {
-        const exp = await Expense_1.default.findById(id);
+        const expenses = await (0, db_1.getExpenses)();
+        const exp = expenses.find(e => e.id === id);
         if (!exp)
             return res.status(404).json({ success: false, message: 'Expense request not found.' });
-        await Expense_1.default.updateOne({ _id: id }, { status: 'rejected' });
+        exp.status = 'rejected';
+        await (0, db_1.saveExpense)(exp);
         await logAudit(operator, 'Expense Rejected', `Rejected expense transaction ID: ${id}`);
         res.json({ success: true, message: 'Expense request rejected.' });
     }

@@ -9,7 +9,6 @@ const Vehicle_1 = __importDefault(require("../models/Vehicle"));
 const Driver_1 = __importDefault(require("../models/Driver"));
 const Trip_1 = __importDefault(require("../models/Trip"));
 const Reward_1 = __importDefault(require("../models/Reward"));
-const AuditLog_1 = __importDefault(require("../models/AuditLog"));
 const routes_data_1 = require("../simulation/routes-data");
 const engine_1 = require("../simulation/engine");
 const authMiddleware_1 = require("../middleware/authMiddleware");
@@ -17,7 +16,7 @@ const router = (0, express_1.Router)();
 // Log Audit Action Helper
 async function logAudit(user, action, details) {
     try {
-        await AuditLog_1.default.create({ action, details, user, timestamp: new Date() });
+        await (0, db_1.saveAuditLog)({ user, action, details });
     }
     catch (err) {
         console.error('Audit log error:', err);

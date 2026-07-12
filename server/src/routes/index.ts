@@ -5,6 +5,7 @@ import driverRoutes from './driverRoutes';
 import tripRoutes from './tripRoutes';
 import expenseRoutes from './expenseRoutes';
 import systemRoutes from './systemRoutes';
+import aiRoutes from './aiRoutes';
 import { getWarehouses } from '../db';
 
 const router = Router();
@@ -16,7 +17,8 @@ router.use('/drivers', driverRoutes);
 router.use('/trips', tripRoutes);
 router.use('/expenses', expenseRoutes);
 router.use('/system', systemRoutes);
-router.use('/ai', systemRoutes);
+router.use('/ai', aiRoutes);
+
 
 // Shared route for warehouses
 router.get('/warehouses', async (req, res) => {

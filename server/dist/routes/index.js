@@ -10,6 +10,7 @@ const driverRoutes_1 = __importDefault(require("./driverRoutes"));
 const tripRoutes_1 = __importDefault(require("./tripRoutes"));
 const expenseRoutes_1 = __importDefault(require("./expenseRoutes"));
 const systemRoutes_1 = __importDefault(require("./systemRoutes"));
+const aiRoutes_1 = __importDefault(require("./aiRoutes"));
 const db_1 = require("../db");
 const router = (0, express_1.Router)();
 // Mount Sub-routers
@@ -19,7 +20,7 @@ router.use('/drivers', driverRoutes_1.default);
 router.use('/trips', tripRoutes_1.default);
 router.use('/expenses', expenseRoutes_1.default);
 router.use('/system', systemRoutes_1.default);
-router.use('/ai', systemRoutes_1.default);
+router.use('/ai', aiRoutes_1.default);
 // Shared route for warehouses
 router.get('/warehouses', async (req, res) => {
     try {

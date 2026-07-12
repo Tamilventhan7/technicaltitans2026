@@ -99,6 +99,67 @@ export async function processLocalNLPQuery(query: string): Promise<AIResponse> {
     };
   }
 
+  // 3b. EXPIRING COMPLIANCE DOCUMENTS
+  if (normalized.includes('expiry') || normalized.includes('expire') || normalized.includes('document') || normalized.includes('license')) {
+    const today = new Date();
+    const expiries: any[] = [];
+
+    vehicles.forEach(v => {
+      const docs = [
+        { doc: 'Insurance', date: v.insuranceExpiry },
+        { doc: 'Fitness Certificate', date: v.fitnessExpiry },
+        { doc: 'Pollution Certificate', date: v.pollutionExpiry },
+      ];
+      docs.forEach(({ doc, date }) => {
+        if (!date) return;
+        const expDate = new Date(date);
+        const daysLeft = Math.round((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysLeft <= 30) {
+          expiries.push({
+            entityId: v.id,
+            entityType: 'Vehicle',
+            document: doc,
+            expiryDate: date,
+            daysLeft,
+            severity: daysLeft <= 0 ? 'danger' : daysLeft <= 7 ? 'warning' : 'info',
+          });
+        }
+      });
+    });
+
+    drivers.forEach(d => {
+      if (!d.licenseExpiry) return;
+      const expDate = new Date(d.licenseExpiry);
+      const daysLeft = Math.round((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= 30) {
+        expiries.push({
+          entityId: d.name,
+          entityType: 'Driver Licence',
+          document: 'Driving License',
+          expiryDate: d.licenseExpiry,
+          daysLeft,
+          severity: daysLeft <= 0 ? 'danger' : daysLeft <= 7 ? 'warning' : 'info',
+        });
+      }
+    });
+
+    expiries.sort((a, b) => a.daysLeft - b.daysLeft);
+
+    return {
+      message: `### Expiring Compliance Documents\nFound **${expiries.length} compliance documents** expiring within 30 days that require administrative renewal or inspection:`,
+      widget: {
+        type: 'list',
+        title: 'Expiring Compliance Documents',
+        data: expiries.map(e => ({
+          label: `${e.entityId} - ${e.document}`,
+          subLabel: `Expiry Date: ${e.expiryDate}`,
+          value: e.daysLeft <= 0 ? 'EXPIRED 🚨' : `Expires in ${e.daysLeft} days`,
+          status: e.severity
+        }))
+      }
+    };
+  }
+
   // 4. FUEL PREDICTION
   if (normalized.includes('fuel expense') || normalized.includes('fuel cost') || normalized.includes('predict') || normalized.includes('expense')) {
     const historicalTrips = trips.filter(t => t.status === 'delivered');

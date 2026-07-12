@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
-import { Vehicle, Driver, Trip, Alert, Warehouse, MaintenanceLog, FuelRecord, SimulationConfig } from './types';
+import { Vehicle, Driver, Trip, Alert, Warehouse, MaintenanceLog, FuelRecord, SimulationConfig, AuditLog, Expense } from './types';
 
 // Mongoose Models
 import UserModel from './models/User';
@@ -66,6 +66,16 @@ const initialSeed = {
     { id: 'FL-01', vehicleId: 'TRK-01', date: '2026-07-10', liters: 120, cost: 180, station: 'Pilot Flying J #442', theftDetected: false },
     { id: 'FL-02', vehicleId: 'TRK-03', date: '2026-07-11', liters: 80, cost: 128, station: 'Love\'s Travel Stop #108', theftDetected: false }
   ] as FuelRecord[],
+  auditLogs: [
+    { id: 'AUD-101', action: 'User Login', details: 'Operator admin@transitops.com logged in successfully from IP 127.0.0.1.', user: 'Admin', timestamp: new Date(Date.now() - 18000000).toISOString() },
+    { id: 'AUD-102', action: 'Simulation Config Update', details: 'Weather severity updated to clear.', user: 'Admin', timestamp: new Date(Date.now() - 14400000).toISOString() },
+    { id: 'AUD-103', action: 'Smart Dispatch Pairing', details: 'AI recommended route pairing generated for CHI -> NYC.', user: 'Dispatcher', timestamp: new Date(Date.now() - 7200000).toISOString() }
+  ] as AuditLog[],
+  expenses: [
+    { id: 'EXP-101', expenseType: 'Fuel & Energy', amount: 15000, driver: 'DRV-01', vehicle: 'TRK-01', paymentMode: 'Card', status: 'approved', remarks: 'Routine fuel fill' },
+    { id: 'EXP-102', expenseType: 'Maintenance', amount: 48000, driver: 'DRV-02', vehicle: 'TRK-02', paymentMode: 'Card', status: 'pending', remarks: 'Brake pads replacement' },
+    { id: 'EXP-103', expenseType: 'Tolls & Permits', amount: 4500, driver: 'DRV-03', vehicle: 'TRK-03', paymentMode: 'Card', status: 'approved', remarks: 'Highway Chicago tolls' }
+  ] as Expense[],
   simulationConfig: {
     fuelPriceMultiplier: 1.0,
     orderVolumeSpike: 0,
@@ -464,6 +474,90 @@ export async function getSimulationConfig(): Promise<SimulationConfig> {
 
 export async function saveSimulationConfig(config: SimulationConfig): Promise<void> {
   localDbState.simulationConfig = config;
+  saveLocalDb();
+}
+
+export async function getAuditLogs(): Promise<AuditLog[]> {
+  if (useMongoose) {
+    const docs = await AuditLogModel.find().sort({ timestamp: -1 }).lean();
+    return docs.map((doc: any) => ({
+      id: doc._id.toString(),
+      action: doc.action,
+      details: doc.details,
+      user: doc.user,
+      timestamp: doc.timestamp ? doc.timestamp.toISOString() : new Date().toISOString()
+    }));
+  }
+  return localDbState.auditLogs || [];
+}
+
+export async function saveAuditLog(log: Omit<AuditLog, 'id' | 'timestamp'> & { id?: string; timestamp?: string }): Promise<void> {
+  const newLog = {
+    id: log.id || `AUD-${Math.floor(100 + Math.random() * 900)}`,
+    action: log.action,
+    details: log.details,
+    user: log.user,
+    timestamp: log.timestamp || new Date().toISOString()
+  };
+
+  if (useMongoose) {
+    await AuditLogModel.create({
+      action: newLog.action,
+      details: newLog.details,
+      user: newLog.user,
+      timestamp: new Date(newLog.timestamp)
+    });
+    return;
+  }
+  if (!localDbState.auditLogs) {
+    localDbState.auditLogs = [];
+  }
+  localDbState.auditLogs.unshift(newLog);
+  saveLocalDb();
+}
+
+export async function getExpenses(): Promise<Expense[]> {
+  if (useMongoose) {
+    const docs = await ExpenseModel.find().lean();
+    return docs.map((doc: any) => ({
+      id: doc._id.toString(),
+      expenseType: doc.expenseType,
+      amount: doc.amount,
+      driver: doc.driver,
+      vehicle: doc.vehicle,
+      paymentMode: doc.paymentMode,
+      status: doc.status,
+      remarks: doc.remarks,
+      approvedBy: doc.approvedBy
+    }));
+  }
+  return localDbState.expenses || [];
+}
+
+export async function saveExpense(exp: Expense): Promise<void> {
+  if (useMongoose) {
+    await ExpenseModel.updateOne(
+      { _id: exp.id },
+      {
+        expenseType: exp.expenseType,
+        amount: exp.amount,
+        driver: exp.driver,
+        vehicle: exp.vehicle,
+        paymentMode: exp.paymentMode,
+        status: exp.status,
+        remarks: exp.remarks,
+        approvedBy: exp.approvedBy
+      },
+      { upsert: true }
+    );
+    return;
+  }
+  if (!localDbState.expenses) {
+    localDbState.expenses = [];
+  }
+  const idx = localDbState.expenses.findIndex((e: any) => e.id === exp.id);
+  if (idx > -1) localDbState.expenses[idx] = exp;
+  else localDbState.expenses.push(exp);
   saveLocalDb();
 }
 

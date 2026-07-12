@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getTrips, resetDatabase } from '../db';
+import { getTrips, resetDatabase, getAuditLogs, saveAuditLog } from '../db';
 import { setSimulationSpeed } from '../simulation/engine';
 import { askAiCopilot } from '../ai/gemini';
 import { getDispatchRecommendations } from '../ai/dispatch';
@@ -10,11 +10,35 @@ const router = Router();
 // Log Audit Action Helper
 async function logAudit(user: string, action: string, details: string) {
   try {
-    await AuditLogModel.create({ action, details, user, timestamp: new Date() });
+    await saveAuditLog({ user, action, details });
   } catch (err) {
     console.error('Audit log error:', err);
   }
 }
+
+// GET /system/audit-logs
+router.get('/audit-logs', async (req, res) => {
+  try {
+    const logs = await getAuditLogs();
+    res.json(logs);
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// POST /system/audit-logs
+router.post('/audit-logs', async (req, res) => {
+  const { action, details, user } = req.body;
+  if (!action || !details || !user) {
+    return res.status(400).json({ success: false, message: 'Action, details, and user are required.' });
+  }
+  try {
+    await saveAuditLog({ action, details, user });
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 // POST /system/reset
 router.post('/reset', async (req, res) => {

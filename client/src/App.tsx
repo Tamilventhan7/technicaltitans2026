@@ -23,6 +23,7 @@ import { FuelPanel } from './components/panels/FuelPanel';
 import { ExpensePanel } from './components/panels/ExpensePanel';
 import { ReportsPanel } from './components/panels/ReportsPanel';
 import { SettingsPanel } from './components/panels/SettingsPanel';
+import { AuditLogPanel } from './components/panels/AuditLogPanel';
 import { AiCopilotDrawer } from './components/copilot/AiCopilotDrawer';
 
 // Auth Pages
@@ -82,6 +83,7 @@ const WorkspaceArea: React.FC = () => {
             {activeTab === 'expenses' && <ExpensePanel />}
             {activeTab === 'reports' && <ReportsPanel />}
             {activeTab === 'settings' && <SettingsPanel />}
+            {activeTab === 'audit' && <AuditLogPanel />}
           </motion.div>
         </AnimatePresence>
       </main>

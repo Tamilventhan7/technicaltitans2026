@@ -59,6 +59,7 @@ const SECTIONS = [
       { id: 'customer', labelKey: 'customerSupport', icon: UserCheck, roles: ['Admin', 'Dispatcher'] },
       { id: 'driver-app', labelKey: 'driverPortal', icon: Smartphone, roles: ['Admin', 'Driver'] },
       { id: 'settings', labelKey: 'settingsControl', icon: Settings, roles: ['Admin', 'FleetManager', 'FinancialAnalyst'] },
+      { id: 'audit', labelKey: 'auditLogs', icon: FileText, roles: ['Admin'] },
     ]
   }
 ];

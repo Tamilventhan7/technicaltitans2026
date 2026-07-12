@@ -5,17 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const User_1 = __importDefault(require("../models/User"));
-const AuditLog_1 = __importDefault(require("../models/AuditLog"));
+const db_1 = require("../db");
 const router = (0, express_1.Router)();
 // Log Audit Action Helper
 async function logAudit(user, action, details) {
     try {
-        await AuditLog_1.default.create({
-            action,
-            details,
-            user,
-            timestamp: new Date()
-        });
+        await (0, db_1.saveAuditLog)({ user, action, details });
     }
     catch (err) {
         console.error('Audit log error:', err);

@@ -101,6 +101,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customerSupport: 'Customer Support',
       settingsControl: 'Settings Control',
       driverPortal: 'Driver Dispatch Portal',
+      auditLogs: 'System Audit Logs',
     },
     hi: {
       commandCenter: 'कमांड सेंटर',
@@ -117,6 +118,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customerSupport: 'ग्राहक सहायता',
       settingsControl: 'सेटिंग्स नियंत्रण',
       driverPortal: 'चालक प्रेषण पोर्टल',
+      auditLogs: 'सिस्टम ऑडिट लॉग',
     },
     ta: {
       commandCenter: 'கட்டளை மையம்',
@@ -133,6 +135,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customerSupport: 'வாடிக்கையாளர் ஆதரவு',
       settingsControl: 'அமைப்புகள் கட்டுப்பாடு',
       driverPortal: 'ஓட்டுநர் அனுப்புகை போர்ட்டல்',
+      auditLogs: 'முறைமை தணிக்கை பதிவுகள்',
     }
   };
 

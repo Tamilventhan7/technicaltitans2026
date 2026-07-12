@@ -1,18 +1,13 @@
 import { Router } from 'express';
 import UserModel from '../models/User';
-import AuditLogModel from '../models/AuditLog';
+import { saveAuditLog } from '../db';
 
 const router = Router();
 
 // Log Audit Action Helper
 async function logAudit(user: string, action: string, details: string) {
   try {
-    await AuditLogModel.create({
-      action,
-      details,
-      user,
-      timestamp: new Date()
-    });
+    await saveAuditLog({ user, action, details });
   } catch (err) {
     console.error('Audit log error:', err);
   }

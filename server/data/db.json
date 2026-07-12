@@ -455,7 +455,7 @@
       "category": "maintenance",
       "severity": "warning",
       "message": "Engine Temperature High (98°C). Maintenance recommended.",
-      "timestamp": "2026-07-12T05:53:34.793Z",
+      "timestamp": "2026-07-12T07:46:18.304Z",
       "resolved": false
     },
     {
@@ -464,7 +464,7 @@
       "category": "maintenance",
       "severity": "info",
       "message": "Driver License DL-WA33490 expires in 16 days.",
-      "timestamp": "2026-07-12T04:53:34.793Z",
+      "timestamp": "2026-07-12T06:46:18.305Z",
       "resolved": false
     }
   ],
@@ -515,6 +515,68 @@
       "cost": 128,
       "station": "Love's Travel Stop #108",
       "theftDetected": false
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "AUD-940",
+      "action": "System Reset",
+      "details": "Database reset back to baseline seed settings.",
+      "user": "Admin",
+      "timestamp": "2026-07-12T08:56:39.688Z"
+    },
+    {
+      "id": "AUD-101",
+      "action": "User Login",
+      "details": "Operator admin@transitops.com logged in successfully from IP 127.0.0.1.",
+      "user": "Admin",
+      "timestamp": "2026-07-12T03:46:18.305Z"
+    },
+    {
+      "id": "AUD-102",
+      "action": "Simulation Config Update",
+      "details": "Weather severity updated to clear.",
+      "user": "Admin",
+      "timestamp": "2026-07-12T04:46:18.305Z"
+    },
+    {
+      "id": "AUD-103",
+      "action": "Smart Dispatch Pairing",
+      "details": "AI recommended route pairing generated for CHI -> NYC.",
+      "user": "Dispatcher",
+      "timestamp": "2026-07-12T06:46:18.305Z"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "EXP-101",
+      "expenseType": "Fuel & Energy",
+      "amount": 15000,
+      "driver": "DRV-01",
+      "vehicle": "TRK-01",
+      "paymentMode": "Card",
+      "status": "approved",
+      "remarks": "Routine fuel fill"
+    },
+    {
+      "id": "EXP-102",
+      "expenseType": "Maintenance",
+      "amount": 48000,
+      "driver": "DRV-02",
+      "vehicle": "TRK-02",
+      "paymentMode": "Card",
+      "status": "pending",
+      "remarks": "Brake pads replacement"
+    },
+    {
+      "id": "EXP-103",
+      "expenseType": "Tolls & Permits",
+      "amount": 4500,
+      "driver": "DRV-03",
+      "vehicle": "TRK-03",
+      "paymentMode": "Card",
+      "status": "approved",
+      "remarks": "Highway Chicago tolls"
     }
   ],
   "simulationConfig": {
