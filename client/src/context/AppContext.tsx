@@ -20,7 +20,7 @@ interface AppContextProps {
   user: { id: string; username: string; role: string; name: string; email: string; phone?: string; department?: string } | null;
   role: 'Admin' | 'FleetManager' | 'Dispatcher' | 'Driver' | 'SafetyOfficer' | 'FinancialAnalyst';
   setRole: (role: 'Admin' | 'FleetManager' | 'Dispatcher' | 'Driver' | 'SafetyOfficer' | 'FinancialAnalyst') => void;
-  login: (username: string) => Promise<void>;
+  login: (username: string, password?: string) => Promise<void>;
   logout: () => void;
   
   // Dispatch & simulation triggers
@@ -245,12 +245,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [socket]);
 
   // Auth Operations
-  const login = async (username: string): Promise<void> => {
+  const login = async (username: string, password?: string): Promise<void> => {
     try {
       const res = await fetch(`${backendUrl}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password: 'password' })
+        body: JSON.stringify({ username, password: password || 'password' })
       });
       const data = await res.json();
       if (data.success) {
@@ -259,9 +259,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setRole(data.user.role);
         setActiveTab('dashboard');
       } else {
-        throw new Error(data.message);
+        throw new Error(data.message || 'Login failed');
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (err.message && err.message.includes('credentials')) {
+        throw err;
+      }
       console.warn('Backend login unavailable. Activating client fallback session.');
       const mockRoles: Record<string, 'Admin' | 'Dispatcher' | 'Driver' | 'SafetyOfficer' | 'FinancialAnalyst' | 'FleetManager'> = {
         admin: 'Admin',

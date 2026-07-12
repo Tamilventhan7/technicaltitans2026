@@ -29,6 +29,7 @@ import { AiCopilotDrawer } from './components/copilot/AiCopilotDrawer';
 // Auth Pages
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
+import { FleetHubPage } from './pages/FleetHubPage';
 
 // Main workspace content area (responds to sidebar width)
 const WorkspaceArea: React.FC = () => {
@@ -127,8 +128,17 @@ const AppContent: React.FC = () => {
     if (activeTab === 'login') {
       return (
         <LoginPage
-          onLoginSuccess={(username) => login(username)}
-          onBackToLanding={() => setActiveTab('landing')}
+          onLoginSuccess={(username, password) => login(username, password)}
+          onBackToLanding={() => setActiveTab('fleet-hub')}
+        />
+      );
+    }
+
+    if (activeTab === 'fleet-hub') {
+      return (
+        <FleetHubPage
+          onGetStarted={() => setActiveTab('login')}
+          onGoBack={() => setActiveTab('landing')}
         />
       );
     }
@@ -138,7 +148,7 @@ const AppContent: React.FC = () => {
         login(presetRole);
         if (targetTab) setActiveTab(targetTab);
       } else {
-        setActiveTab('login');
+        setActiveTab('fleet-hub');
       }
     };
 

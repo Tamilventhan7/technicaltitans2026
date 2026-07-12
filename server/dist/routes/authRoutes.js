@@ -18,7 +18,10 @@ async function logAudit(user, action, details) {
 }
 // POST /login
 router.post('/login', async (req, res) => {
-    const { username } = req.body;
+    const { username, password } = req.body;
+    if (password && password !== 'password') {
+        return res.status(401).json({ success: false, message: 'Invalid security credentials. Passcode key is "password".' });
+    }
     const roleMap = {
         admin: 'Admin',
         dispatcher: 'Dispatcher',
