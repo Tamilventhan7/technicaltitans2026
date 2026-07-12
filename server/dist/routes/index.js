@@ -19,6 +19,7 @@ router.use('/drivers', driverRoutes_1.default);
 router.use('/trips', tripRoutes_1.default);
 router.use('/expenses', expenseRoutes_1.default);
 router.use('/system', systemRoutes_1.default);
+router.use('/ai', systemRoutes_1.default);
 // Shared route for warehouses
 router.get('/warehouses', async (req, res) => {
     try {

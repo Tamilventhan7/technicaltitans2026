@@ -18,12 +18,13 @@ export const MapView: React.FC = () => {
     // US central view coordinates
     const map = L.map(mapRef.current, {
       zoomControl: true,
-      attributionControl: false
+      attributionControl: true
     }).setView([39.8283, -98.5795], 4);
 
-    // Dark Matter tile layer
+    // OpenStreetMap-powered Dark Matter tile layer
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20
+      maxZoom: 20,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     mapInstance.current = map;
@@ -201,15 +202,57 @@ export const MapView: React.FC = () => {
     }
   }, [selectedVehicleId]);
 
+  const idleCount = vehicles.filter(v => v.status === 'idle').length;
+  const transitCount = vehicles.filter(v => v.status === 'in-transit').length;
+  const maintCount = vehicles.filter(v => v.status === 'maintenance').length;
+
   return (
     <div className="relative w-full h-[55vh] rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl glass-panel">
       <div ref={mapRef} className="w-full h-full" />
       
-      {/* Map Floating HUD */}
+      {/* Top-Left: Live Badge */}
       <div className="absolute top-4 left-14 z-[400] flex items-center space-x-2">
-        <div className="px-3.5 py-1.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-[11px] font-bold text-slate-300 shadow-lg flex items-center space-x-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-          <span>Digital Twin Simulation Live</span>
+        <div className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[10px] font-bold text-slate-300 shadow-lg flex items-center space-x-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Digital Twin Live</span>
+        </div>
+      </div>
+
+      {/* Top-Right: Fleet Stats HUD */}
+      <div className="absolute top-4 right-4 z-[400] flex flex-col space-y-1.5">
+        <div className="px-3 py-2 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 shadow-lg space-y-1.5">
+          <p className="text-[8px] font-black uppercase tracking-widest text-slate-500 mb-1">Fleet Status</p>
+          <div className="flex items-center space-x-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="text-[10px] text-emerald-400 font-bold">{transitCount} In Transit</span>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <span className="w-2 h-2 rounded-full bg-blue-400" />
+            <span className="text-[10px] text-slate-400 font-bold">{idleCount} Idle / Ready</span>
+          </div>
+          {maintCount > 0 && (
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span className="text-[10px] text-amber-400 font-bold">{maintCount} Maintenance</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Legend Bar */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[400]">
+        <div className="flex items-center space-x-4 px-4 py-2 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 shadow-lg">
+          {[
+            { color: '#4ade80', label: 'On Route' },
+            { color: '#ef4444', label: 'Delayed' },
+            { color: '#f59e0b', label: 'Maintenance' },
+            { color: '#60a5fa', label: 'Depot / Hub' },
+          ].map(l => (
+            <div key={l.label} className="flex items-center space-x-1.5">
+              <span className="w-2 h-2 rounded-full border border-white/20" style={{ background: l.color }} />
+              <span className="text-[9px] text-slate-400 font-semibold">{l.label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

@@ -94,7 +94,7 @@ export const AiDashboard: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-blue-400" />
           </div>
           <div className="my-4.5 flex items-baseline space-x-2">
-            <span className="text-3xl font-black text-slate-100 font-mono">+$72K</span>
+            <span className="text-3xl font-black text-slate-100 font-mono">+₹60L</span>
             <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Confidence 94%</span>
           </div>
           <p className="text-[10px] text-slate-500 leading-normal">

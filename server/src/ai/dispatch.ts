@@ -105,16 +105,16 @@ export async function getDispatchRecommendations(
       const predictedEfficiency = vehicle.fuelEfficiency / ((1 + cargoFactor) * weatherFactor);
       const expectedFuel = distanceKM / predictedEfficiency;
 
-      // Predict financials
-      const fuelCost = expectedFuel * 1.20 * config.fuelPriceMultiplier; 
-      const driverCost = distanceKM * 0.45;
-      const tollCost = distanceKM * 0.05;
+      // Predict financials (Rupees conversion)
+      const fuelCost = expectedFuel * 95.0 * config.fuelPriceMultiplier; 
+      const driverCost = distanceKM * 5.0;
+      const tollCost = distanceKM * 2.0;
       const totalCost = fuelCost + driverCost + tollCost;
       
-      let baseRate = 2.20; 
-      if (cargoType.toLowerCase() === 'hazmat') baseRate = 3.50;
-      else if (cargoType.toLowerCase() === 'cold-chain') baseRate = 2.80;
-      else if (cargoType.toLowerCase() === 'high-value') baseRate = 3.00;
+      let baseRate = 35.00; 
+      if (cargoType.toLowerCase() === 'hazmat') baseRate = 55.00;
+      else if (cargoType.toLowerCase() === 'cold-chain') baseRate = 45.00;
+      else if (cargoType.toLowerCase() === 'high-value') baseRate = 48.00;
 
       const revenue = distanceKM * baseRate * (1 + (cargoWeightKG / 25000) * 0.3);
       const profit = revenue - totalCost;

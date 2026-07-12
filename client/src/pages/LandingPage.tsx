@@ -19,8 +19,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   ];
 
   const pricing = [
-    { title: "Starter", price: "$149", desc: "Ideal for local fleets managing up to 10 vehicles.", features: ["Real-time GPS Tracking", "Basic Telemetry Updates", "Excel Data Import", "Email support", "Standard routing logs"], popular: false, presetRole: "driver", targetTab: "driver-app" },
-    { title: "Enterprise Pro", price: "$499", desc: "AI-driven optimizations for regional transport networks.", features: ["Everything in Starter", "Digital Twin Live Simulator", "Smart Dispatching Rank Board", "Driver Gamification Tiers", "Gemini AI Assistant Drawer", "SMS/Email SOS notifications"], popular: true, presetRole: "dispatcher", targetTab: "dispatch" },
+    { title: "Starter", price: "₹12,500", desc: "Ideal for local fleets managing up to 10 vehicles.", features: ["Real-time GPS Tracking", "Basic Telemetry Updates", "Excel Data Import", "Email support", "Standard routing logs"], popular: false, presetRole: "driver", targetTab: "driver-app" },
+    { title: "Enterprise Pro", price: "₹42,000", desc: "AI-driven optimizations for regional transport networks.", features: ["Everything in Starter", "Digital Twin Live Simulator", "Smart Dispatching Rank Board", "Driver Gamification Tiers", "Gemini AI Assistant Drawer", "SMS/Email SOS notifications"], popular: true, presetRole: "dispatcher", targetTab: "dispatch" },
     { title: "Custom OEM", price: "Custom", desc: "API integrations and custom maps for national carriers.", features: ["Everything in Pro", "Multi-Tenant Org Controls", "Offline JSON Seeding", "API webhooks integration", "24/7 Dedicated Support", "SLA contract custom rules"], popular: false, presetRole: "admin", targetTab: "dashboard" }
   ];
 

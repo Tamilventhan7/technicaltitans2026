@@ -69,7 +69,7 @@ router.post('/what-if', async (req, res) => {
     const trips = await getTrips();
     const activeTrips = trips.filter(t => t.status === 'in-transit' || t.status === 'delayed');
 
-    const currentFuelPriceBase = 1.20;
+    const currentFuelPriceBase = 95.00;
     const simulatedFuelCost = currentFuelPriceBase * fuelPriceMultiplier;
 
     let profitReduction = 0;

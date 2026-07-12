@@ -1,139 +1,336 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@450;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
+:root {
+  --sidebar-width: 256px;
+  --header-height: 60px;
+  --radius-card: 20px;
+  --radius-btn: 14px;
+  --radius-input: 12px;
+  --radius-modal: 24px;
+  
+  /* Color Palette */
+  --color-brand: 59 130 246;
+  --color-surface: 15 23 42;
+  --color-surface-2: 30 41 59;
+  --color-border: 51 65 85;
+}
+
 @layer base {
   body {
     font-family: 'Inter', sans-serif;
     @apply bg-slate-950 text-slate-100 antialiased overflow-x-hidden;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
+    @apply tracking-tight;
   }
   .font-mono, .font-number, [class*="font-mono"] {
-    font-family: 'IBM Plex Sans', monospace !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+  }
+  * {
+    @apply box-border;
+  }
+  ::selection {
+    @apply bg-blue-600/30 text-blue-100;
   }
 }
 
-/* Glassmorphism Styles */
+/* ============================================
+   GLASSMORPHISM SYSTEM
+   ============================================ */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  background: rgba(10, 16, 30, 0.60);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.04) inset,
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .glass-panel-glow {
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.1);
+  background: rgba(10, 16, 30, 0.65);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  box-shadow:
+    0 0 30px rgba(59, 130, 246, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255,255,255,0.04) inset;
 }
 
 .glass-card {
-  background: rgba(30, 41, 59, 0.25);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-/* Custom Scrollbars */
+/* ============================================
+   PREMIUM SCROLLBARS
+   ============================================ */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
-  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.15);
+  border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.3);
 }
 
-/* Leaflet Dark Map Overrides */
+/* ============================================
+   LEAFLET DARK MAP THEME
+   ============================================ */
 .leaflet-container {
   background: #020617 !important;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   z-index: 10;
 }
-
 .leaflet-bar {
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   box-shadow: none !important;
+  border-radius: 10px !important;
+  overflow: hidden;
 }
-
 .leaflet-bar a {
-  background-color: rgba(15, 23, 42, 0.8) !important;
-  color: #f1f5f9 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(10, 16, 30, 0.85) !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  transition: all 0.15s;
 }
-
 .leaflet-bar a:hover {
-  background-color: rgba(30, 41, 59, 0.9) !important;
+  background-color: rgba(30, 41, 59, 0.95) !important;
   color: #3b82f6 !important;
 }
-
 .leaflet-popup-content-wrapper {
-  background: rgba(15, 23, 42, 0.95) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 16, 30, 0.97) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: #f1f5f9;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
 }
-
 .leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 16, 30, 0.97) !important;
+}
+.leaflet-control-attribution {
+  background: rgba(10, 16, 30, 0.7) !important;
+  color: #475569 !important;
+  font-size: 8px !important;
 }
 
-/* Neon Glow Animations */
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* Danger pulse glow */
 @keyframes neon-glow-danger {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(239, 68, 68, 0.2), 0 0 15px rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.2), 0 0 20px rgba(239, 68, 68, 0.08);
     border-color: rgba(239, 68, 68, 0.3);
   }
   50% {
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4), 0 0 30px rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.45), 0 0 40px rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.65);
   }
 }
+.glow-danger { animation: neon-glow-danger 2s infinite ease-in-out; }
 
-.glow-danger {
-  animation: neon-glow-danger 2s infinite ease-in-out;
-}
-
+/* Vehicle marker pulse ring */
 @keyframes pulse-ring {
-  0% {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
+  0% { transform: scale(0.6); opacity: 0; }
+  50% { opacity: 0.4; }
+  100% { transform: scale(2); opacity: 0; }
 }
-
 .ring-pulsing {
   position: relative;
 }
-
 .ring-pulsing::after {
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 3px solid currentColor;
+  border: 2px solid currentColor;
   left: 0;
   top: 0;
-  animation: pulse-ring 1.8s infinite cubic-bezier(0.215, 0.610, 0.355, 1);
+  animation: pulse-ring 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Shimmer skeleton */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(30, 41, 59, 0.5) 25%,
+    rgba(51, 65, 85, 0.4) 50%,
+    rgba(30, 41, 59, 0.5) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: 8px;
+}
+
+/* Fade in up */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease forwards;
+}
+
+/* Slow spin (compass icons) */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
+/* ============================================
+   BUTTON SYSTEM
+   ============================================ */
+.btn-primary {
+  @apply inline-flex items-center justify-center space-x-2 px-5 py-2.5 text-sm font-bold text-white rounded-[14px] transition-all duration-200;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3), 0 1px 0 rgba(255,255,255,0.1) inset;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4), 0 1px 0 rgba(255,255,255,0.1) inset;
+  filter: brightness(1.05);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center space-x-2 px-5 py-2.5 text-sm font-bold text-slate-300 rounded-[14px] transition-all duration-200 border;
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(100, 116, 139, 0.25);
+}
+.btn-secondary:hover {
+  @apply text-slate-100 border-slate-600;
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center space-x-2 px-5 py-2.5 text-sm font-bold text-red-300 rounded-[14px] transition-all duration-200 border;
+  background: rgba(127, 29, 29, 0.15);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+.btn-danger:hover {
+  background: rgba(127, 29, 29, 0.3);
+  @apply text-red-200 border-red-700/40;
+}
+
+/* ============================================
+   CARD SYSTEM
+   ============================================ */
+.card-metric {
+  @apply glass-panel rounded-[20px] p-6 relative overflow-hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card-metric:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.05) inset;
+}
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+.badge-success {
+  @apply px-2.5 py-0.5 text-[10px] font-bold rounded-lg border;
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.2);
+}
+.badge-warning {
+  @apply px-2.5 py-0.5 text-[10px] font-bold rounded-lg border;
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.2);
+}
+.badge-danger {
+  @apply px-2.5 py-0.5 text-[10px] font-bold rounded-lg border;
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.2);
+}
+.badge-info {
+  @apply px-2.5 py-0.5 text-[10px] font-bold rounded-lg border;
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.2);
+}
+
+/* ============================================
+   INPUT SYSTEM
+   ============================================ */
+.input-field {
+  @apply w-full bg-slate-900/60 border border-slate-800 text-slate-200 text-sm rounded-xl px-4 py-2.5 outline-none transition-all duration-200 placeholder-slate-600;
+}
+.input-field:focus {
+  @apply border-blue-500/50;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+/* ============================================
+   TABLE SYSTEM
+   ============================================ */
+.data-table th {
+  @apply text-[9px] font-black uppercase tracking-widest text-slate-500 pb-3 px-3;
+}
+.data-table td {
+  @apply py-3.5 px-3 text-xs text-slate-300 border-b border-slate-800/40;
+}
+.data-table tr:hover td {
+  @apply bg-slate-900/20;
+}
+
+/* ============================================
+   MISCELLANEOUS UTILITIES
+   ============================================ */
+.text-gradient-blue {
+  @apply text-transparent bg-clip-text;
+  background-image: linear-gradient(135deg, #60a5fa, #818cf8);
+}
+.text-gradient-green {
+  @apply text-transparent bg-clip-text;
+  background-image: linear-gradient(135deg, #34d399, #059669);
+}
+.border-glow-blue {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.08);
+}
+.bg-mesh {
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
+}
+
+/* Focus ring override for accessibility */
+:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
 }

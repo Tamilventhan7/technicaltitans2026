@@ -19,10 +19,10 @@ export const ExpensePanel: React.FC = () => {
 
   // Sample static expense ledger
   const [expenses, setExpenses] = useState([
-    { id: 'EXP-401', type: 'Fuel', amount: 150, driver: 'DRV-01', vehicle: 'TRK-01', status: 'pending', date: '2026-07-11', remarks: 'Diesel fillup Ohio east' },
-    { id: 'EXP-402', type: 'Toll', amount: 45, driver: 'DRV-02', vehicle: 'TRK-02', status: 'approved', date: '2026-07-09', remarks: 'Pennsylvania Turnpike toll fee' },
-    { id: 'EXP-403', type: 'Repairs', amount: 350, driver: 'DRV-03', vehicle: 'TRK-03', status: 'approved', date: '2026-07-10', remarks: 'Headlight sensor calibration' },
-    { id: 'EXP-404', type: 'Lodging', amount: 85, driver: 'DRV-04', vehicle: 'TRK-04', status: 'pending', date: '2026-07-12', remarks: 'Overnight rest stop Illinois' }
+    { id: 'EXP-401', type: 'Fuel', amount: 15000, driver: 'DRV-01', vehicle: 'TRK-01', status: 'pending', date: '2026-07-11', remarks: 'Diesel fillup Ohio east' },
+    { id: 'EXP-402', type: 'Toll', amount: 4500, driver: 'DRV-02', vehicle: 'TRK-02', status: 'approved', date: '2026-07-09', remarks: 'Pennsylvania Turnpike toll fee' },
+    { id: 'EXP-403', type: 'Repairs', amount: 35000, driver: 'DRV-03', vehicle: 'TRK-03', status: 'approved', date: '2026-07-10', remarks: 'Headlight sensor calibration' },
+    { id: 'EXP-404', type: 'Lodging', amount: 8500, driver: 'DRV-04', vehicle: 'TRK-04', status: 'pending', date: '2026-07-12', remarks: 'Overnight rest stop Illinois' }
   ]);
 
   const handleCreate = (e: React.FormEvent) => {
@@ -101,7 +101,7 @@ export const ExpensePanel: React.FC = () => {
           <div className="glass-panel p-5.5 rounded-2xl border border-slate-850">
             <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Total Expenditures</span>
             <div className="mt-2.5 flex items-baseline space-x-1">
-              <DollarSign className="w-4.5 h-4.5 text-emerald-400" />
+              <span className="text-emerald-400 font-bold text-sm mr-1">₹</span>
               <span className="text-2xl font-black text-slate-200 font-mono">{totalExpense.toLocaleString()}</span>
             </div>
             <p className="text-[10px] text-slate-500 mt-1 leading-normal">
@@ -112,7 +112,7 @@ export const ExpensePanel: React.FC = () => {
           <div className="glass-panel p-5.5 rounded-2xl border border-slate-850">
             <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Pending Approvals</span>
             <div className="mt-2.5 flex items-baseline space-x-1">
-              <DollarSign className="w-4.5 h-4.5 text-amber-500" />
+              <span className="text-amber-550 font-bold text-sm mr-1">₹</span>
               <span className="text-2xl font-black text-slate-200 font-mono">{pendingTotal.toLocaleString()}</span>
             </div>
             <p className="text-[10px] text-slate-500 mt-1 leading-normal">
@@ -134,7 +134,7 @@ export const ExpensePanel: React.FC = () => {
                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
                     <span className="font-semibold text-slate-300">{d.name}</span>
                   </div>
-                  <span className="font-mono text-slate-200 font-bold">${d.value}</span>
+                  <span className="font-mono text-slate-200 font-bold">₹{d.value.toLocaleString()}</span>
                 </div>
               ))}
             </div>
@@ -187,7 +187,7 @@ export const ExpensePanel: React.FC = () => {
                     <span className="text-[10px] text-slate-500 font-medium">{e.driver}</span>
                   </td>
                   <td className="py-3 px-3 font-bold text-slate-200">{e.type}</td>
-                  <td className="py-3 px-3 font-mono font-bold text-slate-200">${e.amount}</td>
+                  <td className="py-3 px-3 font-mono font-bold text-slate-200">₹{e.amount.toLocaleString()}</td>
                   <td className="py-3 px-3 text-slate-450 font-semibold">{e.remarks}</td>
                   <td className="py-3 px-3 font-mono text-slate-400">{e.date}</td>
                   <td className="py-3 px-3 text-right">
@@ -269,7 +269,7 @@ export const ExpensePanel: React.FC = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] text-slate-400 uppercase tracking-widest">Amount ($)</label>
+                    <label className="block text-[10px] text-slate-400 uppercase tracking-widest">Amount (₹)</label>
                     <input 
                       type="number"
                       value={amount}

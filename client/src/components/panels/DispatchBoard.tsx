@@ -328,7 +328,7 @@ export const DispatchBoard: React.FC = () => {
                         </div>
                         <div>
                           <span className="text-[9.5px] text-slate-500 font-bold uppercase tracking-wider block">Est. Profit Margin</span>
-                          <span className="font-extrabold text-emerald-400 mt-0.5">${rec.expectedProfitUSD}</span>
+                          <span className="font-extrabold text-emerald-400 mt-0.5">₹{rec.expectedProfitUSD}</span>
                         </div>
                       </div>
                     </div>

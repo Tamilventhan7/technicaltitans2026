@@ -13,15 +13,15 @@ export const MaintenancePanel: React.FC = () => {
   const [targetVehicle, setTargetVehicle] = useState(vehicles[0]?.id || '');
   const [serviceType, setServiceType] = useState('Routine Oil Change');
   const [garage, setGarage] = useState('Central Workshop Hub');
-  const [cost, setCost] = useState(250);
+  const [cost, setCost] = useState(25000);
   const [notes, setNotes] = useState('');
 
   // Sample static maintenance records
   const [logs, setLogs] = useState([
-    { id: 'MNT-101', vehicleId: 'TRK-01', date: '2026-07-10', type: 'Routine Oil Change', cost: 180, status: 'completed', garage: 'Central Workshop Hub', technician: 'Alice Smith' },
-    { id: 'MNT-102', vehicleId: 'TRK-02', date: '2026-07-15', type: 'Brake Replacement', cost: 650, status: 'scheduled', garage: 'East Coast Garage', technician: 'Bob Johnson' },
-    { id: 'MNT-103', vehicleId: 'TRK-03', date: '2026-07-08', type: 'Engine Overhaul', cost: 2400, status: 'completed', garage: 'OEM Service Station', technician: 'Dave Miller' },
-    { id: 'MNT-104', vehicleId: 'TRK-04', date: '2026-07-19', type: 'Sensor Calibration', cost: 350, status: 'scheduled', garage: 'Central Workshop Hub', technician: 'Alice Smith' }
+    { id: 'MNT-101', vehicleId: 'TRK-01', date: '2026-07-10', type: 'Routine Oil Change', cost: 18000, status: 'completed', garage: 'Central Workshop Hub', technician: 'Alice Smith' },
+    { id: 'MNT-102', vehicleId: 'TRK-02', date: '2026-07-15', type: 'Brake Replacement', cost: 65000, status: 'scheduled', garage: 'East Coast Garage', technician: 'Bob Johnson' },
+    { id: 'MNT-103', vehicleId: 'TRK-03', date: '2026-07-08', type: 'Engine Overhaul', cost: 240000, status: 'completed', garage: 'OEM Service Station', technician: 'Dave Miller' },
+    { id: 'MNT-104', vehicleId: 'TRK-04', date: '2026-07-19', type: 'Sensor Calibration', cost: 35000, status: 'scheduled', garage: 'Central Workshop Hub', technician: 'Alice Smith' }
   ]);
 
   const handleScheduleSubmit = (e: React.FormEvent) => {
@@ -74,7 +74,7 @@ export const MaintenancePanel: React.FC = () => {
         <div className="glass-panel p-5 rounded-2xl border border-slate-850">
           <span className="text-[9.5px] text-slate-500 font-bold uppercase tracking-wider block">Cumulative Expenses</span>
           <div className="mt-2 flex items-baseline space-x-1">
-            <DollarSign className="w-4 h-4 text-emerald-400" />
+            <span className="text-emerald-400 font-bold text-sm mr-1">₹</span>
             <span className="text-2xl font-extrabold text-slate-200 font-mono">{totalCost.toLocaleString()}</span>
           </div>
         </div>
@@ -135,7 +135,7 @@ export const MaintenancePanel: React.FC = () => {
                     <span className="font-semibold block">{log.garage}</span>
                     <span className="text-[10px] text-slate-500">{log.technician}</span>
                   </td>
-                  <td className="py-3 px-4 font-mono font-bold text-slate-200">${log.cost}</td>
+                  <td className="py-3 px-4 font-mono font-bold text-slate-200">₹{log.cost.toLocaleString()}</td>
                   <td className="py-3 px-4">
                     <span className={`px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase border ${
                       log.status === 'completed'
@@ -207,7 +207,7 @@ export const MaintenancePanel: React.FC = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] text-slate-400 uppercase tracking-widest">Estimated Cost ($)</label>
+                    <label className="block text-[10px] text-slate-400 uppercase tracking-widest">Estimated Cost (₹)</label>
                     <input 
                       type="number"
                       value={cost}

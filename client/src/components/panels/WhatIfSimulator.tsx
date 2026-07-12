@@ -174,7 +174,7 @@ export const WhatIfSimulator: React.FC = () => {
                   <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Profit Margin Delta</span>
                   <div className="mt-2 flex items-baseline space-x-2">
                     <span className={`text-2xl font-extrabold ${report.projectedProfitDeltaUSD <= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                      {report.projectedProfitDeltaUSD <= 0 ? '' : '+'}${report.projectedProfitDeltaUSD.toLocaleString()}
+                      {report.projectedProfitDeltaUSD <= 0 ? '-' : '+'}₹{Math.abs(report.projectedProfitDeltaUSD).toLocaleString()}
                     </span>
                     <span className="text-[10px] text-slate-500 font-bold">Projected Net</span>
                   </div>

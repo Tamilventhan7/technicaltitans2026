@@ -13,14 +13,14 @@ export const FuelPanel: React.FC = () => {
   // Form State
   const [targetVehicle, setTargetVehicle] = useState(vehicles[0]?.id || '');
   const [liters, setLiters] = useState(120);
-  const [amount, setAmount] = useState(165);
+  const [amount, setAmount] = useState(11500);
   const [station, setStation] = useState('Shell Route-80 North');
 
   // Sample fuel ledgers
   const [records, setRecords] = useState([
-    { id: 'FUEL-901', vehicleId: 'TRK-01', date: '2026-07-11', liters: 140, cost: 196, station: 'BP Express East', efficiency: 4.2 },
-    { id: 'FUEL-902', vehicleId: 'TRK-02', date: '2026-07-09', liters: 160, cost: 224, station: 'Shell Ohio West', efficiency: 3.8 },
-    { id: 'FUEL-903', vehicleId: 'TRK-03', date: '2026-07-12', liters: 125, cost: 172, station: 'BP Express East', efficiency: 4.5 },
+    { id: 'FUEL-901', vehicleId: 'TRK-01', date: '2026-07-11', liters: 140, cost: 13500, station: 'BP Express East', efficiency: 4.2 },
+    { id: 'FUEL-902', vehicleId: 'TRK-02', date: '2026-07-09', liters: 160, cost: 15200, station: 'Shell Ohio West', efficiency: 3.8 },
+    { id: 'FUEL-903', vehicleId: 'TRK-03', date: '2026-07-12', liters: 125, cost: 11800, station: 'BP Express East', efficiency: 4.5 },
   ]);
 
   // Fuel theft anomaly logs
@@ -29,12 +29,12 @@ export const FuelPanel: React.FC = () => {
   ];
 
   const chartData = [
-    { name: '07/07', price: 1.18 },
-    { name: '07/08', price: 1.20 },
-    { name: '07/09', price: 1.22 },
-    { name: '07/10', price: 1.21 },
-    { name: '07/11', price: 1.20 },
-    { name: '07/12', price: 1.24 }
+    { name: '07/07', price: 92.50 },
+    { name: '07/08', price: 93.00 },
+    { name: '07/09', price: 93.80 },
+    { name: '07/10', price: 93.20 },
+    { name: '07/11', price: 93.50 },
+    { name: '07/12', price: 94.10 }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,7 +87,7 @@ export const FuelPanel: React.FC = () => {
           <div className="glass-panel p-5.5 rounded-2xl border border-slate-850">
             <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Total Fuel Spend</span>
             <div className="mt-2.5 flex items-baseline space-x-1">
-              <DollarSign className="w-4.5 h-4.5 text-emerald-400" />
+              <span className="text-emerald-400 font-bold text-sm mr-1">₹</span>
               <span className="text-2xl font-black text-slate-200 font-mono">{totalFuelCost.toLocaleString()}</span>
             </div>
             <p className="text-[10px] text-slate-500 mt-1 leading-normal">
@@ -109,13 +109,13 @@ export const FuelPanel: React.FC = () => {
         {/* Center: Recharts Fuel trend (8 cols) */}
         <div className="xl:col-span-8 glass-panel p-6.5 rounded-3xl border border-slate-850">
           <h3 className="text-xs font-black uppercase text-slate-350 tracking-wider mb-4 border-b border-slate-850 pb-3">
-            Fuel Price Index Trends ($/L)
+            Fuel Price Index Trends (₹/L)
           </h3>
           <div className="h-44 mt-2">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} />
-                <YAxis stroke="#64748b" fontSize={10} tickLine={false} domain={[1.0, 1.3]} />
+                <YAxis stroke="#64748b" fontSize={10} tickLine={false} domain={[90, 96]} />
                 <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '11px' }} />
                 <Line type="monotone" dataKey="price" stroke="#3b82f6" strokeWidth={2.5} dot={{ fill: '#3b82f6', r: 3 }} name="Base Fuel Cost" />
               </LineChart>
@@ -149,7 +149,7 @@ export const FuelPanel: React.FC = () => {
                     <td className="py-2.5 px-3 font-extrabold text-blue-400">{r.vehicleId}</td>
                     <td className="py-2.5 px-3 font-mono text-slate-300">{r.date}</td>
                     <td className="py-2.5 px-3 font-mono font-semibold text-slate-200">{r.liters}L</td>
-                    <td className="py-2.5 px-3 font-mono font-bold text-slate-200">${r.cost}</td>
+                    <td className="py-2.5 px-3 font-mono font-bold text-slate-200">₹{r.cost.toLocaleString()}</td>
                     <td className="py-2.5 px-3 text-slate-400 font-semibold">{r.station}</td>
                     <td className="py-2.5 px-3 font-mono font-bold text-emerald-400">{r.efficiency} KM/L</td>
                   </tr>
@@ -235,7 +235,7 @@ export const FuelPanel: React.FC = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] text-slate-400 uppercase tracking-widest">Total cost ($)</label>
+                    <label className="block text-[10px] text-slate-400 uppercase tracking-widest">Total cost (₹)</label>
                     <input 
                       type="number"
                       value={amount}
