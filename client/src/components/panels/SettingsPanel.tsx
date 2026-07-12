@@ -6,7 +6,7 @@ import {
 import { useApp } from '../../context/AppContext';
 
 export const SettingsPanel: React.FC = () => {
-  const { role, resetDatabase } = useApp();
+  const { role, resetDatabase, language, setLanguage } = useApp();
 
   // Form states
   const [orgName, setOrgName] = useState('TransitOps Global Carriers');
@@ -78,6 +78,8 @@ export const SettingsPanel: React.FC = () => {
                 <div className="space-y-1.5">
                   <label className="block text-[10px] text-slate-400 uppercase tracking-widest">System Language</label>
                   <select 
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value as any)}
                     className="w-full bg-slate-950 border border-slate-850 focus:border-blue-500/30 rounded-xl p-3 text-slate-200 text-xs font-bold focus:outline-none cursor-pointer"
                   >
                     <option value="en">English (US)</option>

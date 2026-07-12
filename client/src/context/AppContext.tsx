@@ -49,6 +49,11 @@ interface AppContextProps {
   deleteVehicle: (id: string) => Promise<void>;
   createDriver: (data: { id: string; name: string; licenseNumber: string; phone: string; email: string }) => Promise<void>;
   deleteDriver: (id: string) => Promise<void>;
+
+  // i18n Translations
+  language: 'en' | 'hi' | 'ta';
+  setLanguage: (lang: 'en' | 'hi' | 'ta') => void;
+  t: (key: string) => string;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -76,6 +81,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<'Admin' | 'FleetManager' | 'Dispatcher' | 'Driver' | 'SafetyOfficer' | 'FinancialAnalyst'>('Admin');
+
+  // i18n translations
+  const [language, setLanguage] = useState<'en' | 'hi' | 'ta'>('en');
+
+  const translations: Record<'en' | 'hi' | 'ta', Record<string, string>> = {
+    en: {
+      commandCenter: 'Command Center',
+      aiDashboard: 'AI Dashboard',
+      fleetRegister: 'Fleet Register',
+      driversShift: 'Drivers Shift Roster',
+      smartDispatch: 'Smart Dispatch',
+      maintenanceLog: 'Maintenance Log',
+      fuelLedger: 'Fuel Ledger',
+      expensesAudit: 'Expenses Audit',
+      whatIf: 'What-If Simulator',
+      driverStandings: 'Driver Standings',
+      reportsHub: 'Reports Hub',
+      customerSupport: 'Customer Support',
+      settingsControl: 'Settings Control',
+      driverPortal: 'Driver Dispatch Portal',
+    },
+    hi: {
+      commandCenter: 'कमांड सेंटर',
+      aiDashboard: 'एआई डैशबोर्ड',
+      fleetRegister: 'बेड़ा रजिस्टर',
+      driversShift: 'चालक शिफ्ट रोस्टर',
+      smartDispatch: 'स्मार्ट प्रेषण',
+      maintenanceLog: 'रखरखाव लॉग',
+      fuelLedger: 'ईंधन बही',
+      expensesAudit: 'व्यय लेखापरीक्षा',
+      whatIf: 'व्हाट-इफ सिम्युलेटर',
+      driverStandings: 'चालक रैंकिंग',
+      reportsHub: 'रिपोर्ट हब',
+      customerSupport: 'ग्राहक सहायता',
+      settingsControl: 'सेटिंग्स नियंत्रण',
+      driverPortal: 'चालक प्रेषण पोर्टल',
+    },
+    ta: {
+      commandCenter: 'கட்டளை மையம்',
+      aiDashboard: 'செயற்கை அறிவு முகப்பு',
+      fleetRegister: 'வண்டி பதிவேடு',
+      driversShift: 'ஓட்டுநர் பட்டியல்',
+      smartDispatch: 'ஸ்மார்ட் அனுப்புகை',
+      maintenanceLog: 'பராமரிப்பு பதிவேடு',
+      fuelLedger: 'எரிபொருள் கணக்கு',
+      expensesAudit: 'செலவு தணிக்கை',
+      whatIf: 'வாட்-இஃப் சிமுலேட்டர்',
+      driverStandings: 'ஓட்டுநர் தரவரிசை',
+      reportsHub: 'அறிக்கை மையம்',
+      customerSupport: 'வாடிக்கையாளர் ஆதரவு',
+      settingsControl: 'அமைப்புகள் கட்டுப்பாடு',
+      driverPortal: 'ஓட்டுநர் அனுப்புகை போர்ட்டல்',
+    }
+  };
+
+  const t = (key: string) => {
+    return translations[language][key] || key;
+  };
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
@@ -366,7 +429,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createVehicle,
       deleteVehicle,
       createDriver,
-      deleteDriver
+      deleteDriver,
+      language,
+      setLanguage,
+      t
     }}>
       {children}
     </AppContext.Provider>

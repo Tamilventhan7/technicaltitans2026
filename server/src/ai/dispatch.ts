@@ -78,13 +78,17 @@ export async function getDispatchRecommendations(
 
   // Iterate over vehicles and drivers to find combinations
   for (const vehicle of vehicles) {
-    // Capacity validations:sprinters cannot take heavy loads
+    // Capacity validations
     let capacityLimitKG = 2000; // Sprinter Van
     if (vehicle.type === 'Heavy Duty Truck') capacityLimitKG = 25000;
     else if (vehicle.type === 'Reefer') capacityLimitKG = 20000;
     else if (vehicle.type === 'Medium Cargo') capacityLimitKG = 10000;
 
-    if (cargoWeightKG > capacityLimitKG) continue; // vehicle overloaded
+    const isOverloaded = cargoWeightKG > capacityLimitKG;
+    // Prevent small vans from taking extreme heavy container loads
+    if (isOverloaded && cargoWeightKG > 45000 && (vehicle.type === 'Sprinter Van' || vehicle.type === 'Medium Cargo')) {
+      continue; 
+    }
 
     for (const driver of drivers) {
       // Driver active hours validation (e.g. check if driver will exceed 11h driving)
@@ -102,13 +106,12 @@ export async function getDispatchRecommendations(
       const expectedFuel = distanceKM / predictedEfficiency;
 
       // Predict financials
-      const fuelCost = expectedFuel * 1.20 * config.fuelPriceMultiplier; // $1.20 base fuel price
+      const fuelCost = expectedFuel * 1.20 * config.fuelPriceMultiplier; 
       const driverCost = distanceKM * 0.45;
       const tollCost = distanceKM * 0.05;
       const totalCost = fuelCost + driverCost + tollCost;
       
-      // Revenue formula: cargo type multiplier * distance * weight factor
-      let baseRate = 2.20; // $2.20/KM
+      let baseRate = 2.20; 
       if (cargoType.toLowerCase() === 'hazmat') baseRate = 3.50;
       else if (cargoType.toLowerCase() === 'cold-chain') baseRate = 2.80;
       else if (cargoType.toLowerCase() === 'high-value') baseRate = 3.00;
@@ -116,22 +119,19 @@ export async function getDispatchRecommendations(
       const revenue = distanceKM * baseRate * (1 + (cargoWeightKG / 25000) * 0.3);
       const profit = revenue - totalCost;
 
-      // Match scoring logic (out of 100)
-      // 1. Safety alignment (40% weight): rating + driver safety index
+      // Match scoring logic
       const driverSafetyScore = driver.safetyScore * 0.4;
       const driverRatingScore = (driver.rating / 5.0) * 100 * 0.2;
-      const driverFactor = driverSafetyScore + driverRatingScore; // max 60
+      const driverFactor = driverSafetyScore + driverRatingScore; 
 
-      // 2. Asset alignment (30% weight): vehicle health + type optimization
       const healthFactor = vehicle.healthScore * 0.15;
-      let typeMatch = 15; // Sprinter for under 2t cargo is good, heavy truck for heavy cargo is good
+      let typeMatch = 15; 
       if (cargoWeightKG > 8000 && vehicle.type !== 'Heavy Duty Truck' && vehicle.type !== 'Reefer') {
-        typeMatch = 5; // bad fit
+        typeMatch = 5; 
       }
-      const vehicleFactor = healthFactor + typeMatch; // max 30
+      const vehicleFactor = healthFactor + typeMatch; 
 
-      // 3. Efficiency alignment (10% weight): fuel efficiency + carbon footprint
-      const efficiencyFactor = Math.min(10, vehicle.fuelEfficiency * 1.2); // max 10
+      const efficiencyFactor = Math.min(10, vehicle.fuelEfficiency * 1.2); 
 
       let score = Math.round(driverFactor + vehicleFactor + efficiencyFactor);
 
@@ -139,20 +139,27 @@ export async function getDispatchRecommendations(
       if (vehicle.healthScore < 70) score -= 15;
       if (driver.safetyScore < 80) score -= 15;
       if (vehicle.currentFuel < expectedFuel) {
-        // Truck requires refueling stop, penalize score slightly
         score -= 5;
+      }
+      if (isOverloaded) {
+        score -= 40; // Deduct score heavily for safety overload
       }
 
       const finalScore = Math.max(10, Math.min(100, score));
 
       // Construct reasoning text
-      let reasoning = `Recommended based on Driver ${driver.name}'s safety score of ${driver.safetyScore}% `;
-      if (vehicle.type === 'Reefer' && cargoType.toLowerCase() === 'cold-chain') {
-        reasoning += `and the Reefer asset's cooling capabilities for cold-chain inventory.`;
-      } else if (vehicle.healthScore > 90) {
-        reasoning += `and high asset mechanical health (${vehicle.healthScore}%).`;
+      let reasoning = '';
+      if (isOverloaded) {
+        reasoning = `CRITICAL WARNING: Cargo weight (${cargoWeightKG.toLocaleString()} KG) exceeds safety capacity rating of this ${vehicle.type} (${capacityLimitKG.toLocaleString()} KG). Overload hazard detected.`;
       } else {
-        reasoning += `and optimal asset capacity matching.`;
+        reasoning = `Recommended based on Driver ${driver.name}'s safety score of ${driver.safetyScore}% `;
+        if (vehicle.type === 'Reefer' && cargoType.toLowerCase() === 'cold-chain') {
+          reasoning += `and the Reefer asset's cooling capabilities for cold-chain inventory.`;
+        } else if (vehicle.healthScore > 90) {
+          reasoning += `and high asset mechanical health (${vehicle.healthScore}%).`;
+        } else {
+          reasoning += `and optimal asset capacity matching.`;
+        }
       }
 
       if (vehicle.currentFuel < expectedFuel) {

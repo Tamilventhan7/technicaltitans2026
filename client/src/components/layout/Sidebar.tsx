@@ -21,25 +21,25 @@ import {
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
-  const { activeTab, setActiveTab, alerts, kpis, setSimulationSpeed, resetDatabase, role, logout } = useApp();
+  const { activeTab, setActiveTab, alerts, kpis, setSimulationSpeed, resetDatabase, role, logout, t } = useApp();
 
   const activeAlertsCount = alerts.filter(a => !a.resolved).length;
 
   const allMenuItems = [
-    { id: 'dashboard', label: 'Command Center', icon: LayoutDashboard, badge: activeAlertsCount > 0 ? activeAlertsCount : undefined, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer', 'FinancialAnalyst'] },
-    { id: 'ai-dashboard', label: 'AI Dashboard', icon: Brain, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer', 'FinancialAnalyst'] },
-    { id: 'fleet', label: 'Fleet Register', icon: Truck, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer'] },
-    { id: 'drivers', label: 'Drivers Shift Roster', icon: Users, roles: ['Admin', 'FleetManager', 'SafetyOfficer'] },
-    { id: 'dispatch', label: 'Smart Dispatch', icon: Send, roles: ['Admin', 'FleetManager', 'Dispatcher'] },
-    { id: 'maintenance', label: 'Maintenance Log', icon: Wrench, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer'] },
-    { id: 'fuel', label: 'Fuel Ledger', icon: Fuel, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer'] },
-    { id: 'expenses', label: 'Expenses Audit', icon: DollarSign, roles: ['Admin', 'FinancialAnalyst'] },
-    { id: 'what-if', label: 'What-If Simulator', icon: Sliders, roles: ['Admin', 'FinancialAnalyst'] },
-    { id: 'gamification', label: 'Driver Standings', icon: Trophy, roles: ['Admin', 'FleetManager', 'SafetyOfficer'] },
-    { id: 'reports', label: 'Reports Hub', icon: FileText, roles: ['Admin', 'FleetManager', 'FinancialAnalyst'] },
-    { id: 'customer', label: 'Customer Support', icon: UserCheck, roles: ['Admin', 'Dispatcher'] },
-    { id: 'settings', label: 'Settings Control', icon: Settings, roles: ['Admin', 'FleetManager', 'FinancialAnalyst'] },
-    { id: 'driver-app', label: 'Driver Dispatch Portal', icon: Smartphone, roles: ['Admin', 'Driver'] }
+    { id: 'dashboard', label: t('commandCenter'), icon: LayoutDashboard, badge: activeAlertsCount > 0 ? activeAlertsCount : undefined, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer', 'FinancialAnalyst'] },
+    { id: 'ai-dashboard', label: t('aiDashboard'), icon: Brain, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer', 'FinancialAnalyst'] },
+    { id: 'fleet', label: t('fleetRegister'), icon: Truck, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer'] },
+    { id: 'drivers', label: t('driversShift'), icon: Users, roles: ['Admin', 'FleetManager', 'SafetyOfficer'] },
+    { id: 'dispatch', label: t('smartDispatch'), icon: Send, roles: ['Admin', 'FleetManager', 'Dispatcher'] },
+    { id: 'maintenance', label: t('maintenanceLog'), icon: Wrench, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer'] },
+    { id: 'fuel', label: t('fuelLedger'), icon: Fuel, roles: ['Admin', 'FleetManager', 'Dispatcher', 'SafetyOfficer'] },
+    { id: 'expenses', label: t('expensesAudit'), icon: DollarSign, roles: ['Admin', 'FinancialAnalyst'] },
+    { id: 'what-if', label: t('whatIf'), icon: Sliders, roles: ['Admin', 'FinancialAnalyst'] },
+    { id: 'gamification', label: t('driverStandings'), icon: Trophy, roles: ['Admin', 'FleetManager', 'SafetyOfficer'] },
+    { id: 'reports', label: t('reportsHub'), icon: FileText, roles: ['Admin', 'FleetManager', 'FinancialAnalyst'] },
+    { id: 'customer', label: t('customerSupport'), icon: UserCheck, roles: ['Admin', 'Dispatcher'] },
+    { id: 'settings', label: t('settingsControl'), icon: Settings, roles: ['Admin', 'FleetManager', 'FinancialAnalyst'] },
+    { id: 'driver-app', label: t('driverPortal'), icon: Smartphone, roles: ['Admin', 'Driver'] }
   ];
 
   // Filter items matching user's current role
