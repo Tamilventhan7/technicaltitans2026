@@ -7,7 +7,7 @@ export const TripStatusBoard: React.FC = () => {
   const { trips, vehicles, drivers, injectIncident, setSelectedVehicleId } = useApp();
   const [injectingTripId, setInjectingTripId] = useState<string | null>(null);
 
-  const activeTrips = trips.filter(t => t.status === 'in-transit' || t.status === 'delayed');
+  const activeTrips = (trips || []).filter(t => t.status === 'in-transit' || t.status === 'delayed');
 
   const handleInject = async (tripId: string, category: string) => {
     try {

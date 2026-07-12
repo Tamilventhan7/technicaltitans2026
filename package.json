@@ -12,7 +12,12 @@
     "build": "npm run build:frontend && npm run build:backend",
     "start": "npm start --prefix backend"
   },
-  "dependencies": {},
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "mapbox-gl": "^3.26.0",
+    "react-leaflet": "^5.0.0",
+    "react-map-gl": "^8.1.1"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }

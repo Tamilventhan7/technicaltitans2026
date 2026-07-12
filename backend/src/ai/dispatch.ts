@@ -1,4 +1,5 @@
-import { getVehicles, getDrivers, getSimulationConfig } from '../db';
+import { Vehicle as VehicleModel, Driver as DriverModel } from '../models';
+import { getSimulationConfig } from '../db';
 import { HUBS, findRouteWaypoints } from '../simulation/routes-data';
 import { Vehicle, Driver, GPSCoordinate } from '../types';
 
@@ -41,8 +42,8 @@ export async function getDispatchRecommendations(
   cargoWeightKG: number,
   cargoType: string
 ): Promise<DispatchRecommendation[]> {
-  const vehicles = (await getVehicles()).filter(v => v.status === 'idle');
-  const drivers = (await getDrivers()).filter(d => d.status === 'available');
+  const vehicles = (await VehicleModel.find({ status: 'idle', isDeleted: false })).map(v => v.toObject() as any);
+  const drivers = (await DriverModel.find({ status: 'available', isDeleted: false })).map(d => d.toObject() as any);
   const config = await getSimulationConfig();
 
   const origin = HUBS[originId];

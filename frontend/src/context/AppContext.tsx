@@ -77,20 +77,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         tRes.json()
       ]);
 
-      setVehicles(vData);
-      setDrivers(dData);
-      setWarehouses(wData);
-      setTrips(tData);
+      setVehicles(Array.isArray(vData) ? vData : []);
+      setDrivers(Array.isArray(dData) ? dData : []);
+      setWarehouses(Array.isArray(wData) ? wData : []);
+      setTrips(Array.isArray(tData) ? tData : []);
 
       // Extract basic alerts
-      const activeAlerts = tData.reduce((acc: Alert[], t: Trip) => {
+      const activeAlerts = Array.isArray(tData) ? tData.reduce((acc: Alert[], t: Trip) => {
         return acc; // alerts are driven from socket or API separately if needed
-      }, []);
+      }, []) : [];
     } catch (err) {
       console.error('Error fetching initial fleet data:', err);
     } finally {
       setLoading(false);
     }
+
   };
 
   useEffect(() => {

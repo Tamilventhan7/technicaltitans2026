@@ -1,4 +1,4 @@
-import { getVehicles, getDrivers, getTrips, getAlerts, getMaintenanceLogs, getFuelRecords } from '../db';
+import { Vehicle as VehicleModel, Driver as DriverModel, Trip as TripModel, Alert as AlertModel, MaintenanceRecord as MaintenanceModel } from '../models';
 import { Trip, Vehicle, Driver, Alert } from '../types';
 
 export interface AIResponse {
@@ -14,11 +14,11 @@ export interface AIResponse {
 export async function processLocalNLPQuery(query: string): Promise<AIResponse> {
   const normalized = query.toLowerCase().trim();
 
-  const vehicles = await getVehicles();
-  const drivers = await getDrivers();
-  const trips = await getTrips();
-  const alerts = await getAlerts();
-  const maintenanceLogs = await getMaintenanceLogs();
+  const vehicles = (await VehicleModel.find({ isDeleted: false })).map(v => v.toObject() as any);
+  const drivers = (await DriverModel.find({ isDeleted: false })).map(d => d.toObject() as any);
+  const trips = (await TripModel.find({ isDeleted: false })).map(t => t.toObject() as any);
+  const alerts = (await AlertModel.find({ isDeleted: false })).map((a: any) => a.toObject() as any);
+  const maintenanceLogs = (await MaintenanceModel.find({ isDeleted: false })).map(m => m.toObject() as any);
 
   // 1. SAFE DRIVERS / SAFEST DRIVER
   if (normalized.includes('safe') || normalized.includes('driver safety') || normalized.includes('leaderboard')) {
@@ -203,20 +203,20 @@ export async function processLocalNLPQuery(query: string): Promise<AIResponse> {
 
   // 8. CEO SUMMARY
   if (normalized.includes('ceo') || normalized.includes('summary') || normalized.includes('executive')) {
-    const totalRevenue = trips.reduce((acc, t) => acc + t.financials.revenue, 0);
-    const totalCost = trips.reduce((acc, t) => acc + t.financials.cost, 0);
+    const totalRevenue = trips.reduce((acc: number, t: any) => acc + t.financials.revenue, 0);
+    const totalCost = trips.reduce((acc: number, t: any) => acc + t.financials.cost, 0);
     const totalProfit = totalRevenue - totalCost;
-    const avgHealth = Math.round(vehicles.reduce((acc, v) => acc + v.healthScore, 0) / vehicles.length);
+    const avgHealth = Math.round(vehicles.reduce((acc: number, v: any) => acc + v.healthScore, 0) / vehicles.length);
 
     return {
-      message: `### Executive Operations Summary\nTransitOps AI+ Platform Performance overview:\n\n* **Active Dispatch Network**: **${trips.filter(t => t.status === 'in-transit').length}** vehicles rolling, **${warehousesCountActive(trips)}** logistics nodes loaded.\n* **Fleet Reliability**: Average mechanical health is at **${avgHealth}%**.\n* **Financial Health**: Gross Profit represents **$${totalProfit.toLocaleString()}**.\n* **Operational Exceptions**: **${alerts.filter(a => !a.resolved).length}** active warnings require attention.\n\nOperations are highly profitable; we recommend scheduling critical service on TRK-07 immediately to mitigate downtime risk.`,
+      message: `### Executive Operations Summary\nTransitOps AI+ Platform Performance overview:\n\n* **Active Dispatch Network**: **${trips.filter(t => t.status === 'in-transit').length}** vehicles rolling, **${warehousesCountActive(trips)}** logistics nodes loaded.\n* **Fleet Reliability**: Average mechanical health is at **${avgHealth}%**.\n* **Financial Health**: Gross Profit represents **$${totalProfit.toLocaleString()}**.\n* **Operational Exceptions**: **${alerts.filter((a: any) => !a.resolved).length}** active warnings require attention.\n\nOperations are highly profitable; we recommend scheduling critical service on TRK-07 immediately to mitigate downtime risk.`,
       widget: {
         type: 'kpis',
         title: 'CEO Operations Overview',
         data: [
           { label: 'Cumulative Revenue', value: `$${totalRevenue.toLocaleString()}` },
           { label: 'Cumulative Profit', value: `$${totalProfit.toLocaleString()}` },
-          { label: 'Active Alerts', value: alerts.filter(a => !a.resolved).length }
+          { label: 'Active Alerts', value: alerts.filter((a: any) => !a.resolved).length }
         ]
       }
     };

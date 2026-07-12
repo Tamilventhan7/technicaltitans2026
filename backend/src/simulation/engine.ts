@@ -1,12 +1,7 @@
 import { Server } from 'socket.io';
-import { 
-  getVehicles, saveVehicle, 
-  getDrivers, saveDriver, 
-  getTrips, saveTrip, 
-  getAlerts, saveAlert, 
-  getSimulationConfig 
-} from '../db';
-import { Trip, Vehicle, Driver, Alert, GPSCoordinate, SimulationConfig } from '../types';
+import { Vehicle, Driver, Trip, Alert } from '../models';
+import { getSimulationConfig, isDbConnected } from '../db';
+import { GPSCoordinate } from '../types';
 
 let ioInstance: Server | null = null;
 let intervalId: NodeJS.Timeout | null = null;
@@ -48,14 +43,24 @@ export function stopSimulation() {
 
 // Tick calculations
 async function tick() {
-  const trips = await getTrips();
-  const activeTrips = trips.filter(t => t.status === 'in-transit' || t.status === 'delayed');
+  if (!isDbConnected) {
+    // Database connection is offline, bypass ticks
+    return;
+  }
+  const activeTrips = await Trip.find({
+    status: { $in: ['in-transit', 'delayed'] },
+    isDeleted: false
+  });
 
-  if (activeTrips.length === 0) return;
+  if (activeTrips.length === 0) {
+    // If no active trips, still broadcast statistics to keep sockets alive
+    broadcastStats([]);
+    return;
+  }
 
   const config = await getSimulationConfig();
-  const vehicles = await getVehicles();
-  const drivers = await getDrivers();
+  const vehicles = await Vehicle.find({ isDeleted: false });
+  const drivers = await Driver.find({ isDeleted: false });
 
   for (const trip of activeTrips) {
     const vehicle = vehicles.find(v => v.id === trip.vehicleId);
@@ -79,7 +84,7 @@ async function tick() {
     else if (config.trafficLevel === 'jammed') targetSpeed -= 45;
 
     // Apply speed limits if delayed or in-transit
-    if (trip.status === 'delayed') targetSpeed = Math.min(targetSpeed, 40); // slow or broken down
+    if (trip.status === 'delayed') targetSpeed = Math.min(targetSpeed, 40); 
     
     // Move speed closer to target
     if (speed < targetSpeed) speed = Math.min(targetSpeed, speed + 10);
@@ -94,42 +99,34 @@ async function tick() {
 
     vehicle.gps.speed = speed;
 
-    // Update coordinate indices based on speed and multiplier
-    // GPS update frequency = (speed in meters/second) * multiplier
-    const speedMPS = (speed * 1000) / 3600;
     const distanceThisTickKM = (speed * (1 / 3600)) * simMultiplier;
 
     // Odometer
     vehicle.odometer += distanceThisTickKM;
     driver.totalMiles += distanceThisTickKM;
 
-    // Increment currentRouteIndex by stepping proportional to distance
-    // Let's assume each segment coordinate is roughly ~1 KM apart.
-    // So current index increases by distanceThisTickKM / segmentDistance.
-    // For safety, let's step indices:
-    // If coordinates count = 300, index represents route percentage
-    const stepRatio = Math.max(1, Math.ceil(distanceThisTickKM * 20)); // scaling factor
+    const stepRatio = Math.max(1, Math.ceil(distanceThisTickKM * 20)); 
     const newIdx = Math.min(trip.currentRouteIndex + (stepRatio * simMultiplier), trip.route.length - 1);
     trip.currentRouteIndex = newIdx;
 
     const currentCoords = trip.route[newIdx];
-    vehicle.gps.latitude = currentCoords.lat;
-    vehicle.gps.longitude = currentCoords.lng;
+    if (currentCoords) {
+      vehicle.gps.latitude = currentCoords.lat;
+      vehicle.gps.longitude = currentCoords.lng;
+    }
 
     // Fuel depletion calculation
-    // Base burn rate: heavy trucks burn ~0.3 L/KM, sprinters ~0.12 L/KM, reefer ~0.35 L/KM (fridge engine)
     let burnPerKM = 0.28;
     if (vehicle.type === 'Sprinter Van') burnPerKM = 0.12;
     else if (vehicle.type === 'Medium Cargo') burnPerKM = 0.20;
     else if (vehicle.type === 'Reefer') burnPerKM = 0.33;
 
-    // Factors: Cargo weight (0.01 per ton/1000kg), traffic level, fuel multiplier slider
     const cargoFactor = (trip.cargoWeight / 10000) * 0.05;
     let weatherFactor = 1.0;
     if (config.weatherSeverity === 'storm') weatherFactor = 1.25;
     else if (config.weatherSeverity === 'rain') weatherFactor = 1.1;
 
-    const currentBurnRate = burnPerKM * (1 + cargoFactor) * weatherFactor * config.fuelPriceMultiplier;
+    const currentBurnRate = burnPerKM * (1 + cargoFactor) * weatherFactor;
     const fuelBurned = distanceThisTickKM * currentBurnRate;
 
     vehicle.currentFuel = Math.max(0, vehicle.currentFuel - fuelBurned);
@@ -148,37 +145,38 @@ async function tick() {
     driver.activeHoursToday += (1 / 3600) * simMultiplier;
     if (driver.activeHoursToday > 11) {
       driver.status = 'resting';
-      // Trigger fatigue alert if not already logged
       const fatigueAlertId = `AL-FAT-${trip.id}`;
-      const existing = (await getAlerts()).find(a => a.id === fatigueAlertId);
+      const existing = await Alert.findOne({ id: fatigueAlertId });
       if (!existing) {
-        await triggerAlert({
+        const alert = await Alert.create({
           id: fatigueAlertId,
           tripId: trip.id,
           driverId: driver.id,
           category: 'fatigue',
           severity: 'warning',
           message: `Safety Violation: Driver ${driver.name} has exceeded 11 hours maximum shift limit. Fatigue warning active.`,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date(),
           resolved: false,
-          location: currentCoords
+          location: currentCoords,
+          isDeleted: false
         });
+        triggerAlert(alert);
       }
     }
 
     // Financial updates
-    const fuelCostBurned = fuelBurned * 1.20 * config.fuelPriceMultiplier; // $1.20 per liter base
+    const fuelCostBurned = fuelBurned * 1.20 * config.fuelPriceMultiplier; 
     trip.financials.fuelCost += fuelCostBurned;
     trip.financials.driverCost += distanceThisTickKM * 0.45; // $0.45/KM
     trip.financials.tollCost += distanceThisTickKM * 0.05; // $0.05/KM
     trip.financials.cost = trip.financials.fuelCost + trip.financials.driverCost + trip.financials.tollCost;
     trip.financials.profit = trip.financials.revenue - trip.financials.cost;
 
-    // Append telemetry logs (cap at 200 logs to prevent memory leaks)
+    // Append telemetry logs
     trip.telemetryLogs.push({
       timestamp: new Date().toISOString(),
-      lat: currentCoords.lat,
-      lng: currentCoords.lng,
+      lat: currentCoords ? currentCoords.lat : vehicle.gps.latitude,
+      lng: currentCoords ? currentCoords.lng : vehicle.gps.longitude,
       speed: speed,
       fuelRemaining: vehicle.currentFuel
     });
@@ -189,22 +187,24 @@ async function tick() {
     // Check low fuel alert
     if (vehicle.currentFuel < (vehicle.fuelCapacity * 0.15)) {
       const fuelAlertId = `AL-LF-${vehicle.id}`;
-      const existing = (await getAlerts()).find(a => a.id === fuelAlertId && !a.resolved);
+      const existing = await Alert.findOne({ id: fuelAlertId, resolved: false });
       if (!existing) {
-        await triggerAlert({
+        const alert = await Alert.create({
           id: fuelAlertId,
           vehicleId: vehicle.id,
           category: 'weather_risk', // closest match, or low fuel
           severity: 'warning',
           message: `Fuel Alert: ${vehicle.id} has dropped below 15% fuel capacity (${Math.round(vehicle.currentFuel)}L remaining).`,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date(),
           resolved: false,
-          location: currentCoords
+          location: currentCoords,
+          isDeleted: false
         });
+        triggerAlert(alert);
       }
     }
 
-    // Check random incidents (1% chance per tick when running at 1x, scaled by time multiplier)
+    // Check random incidents (0.5% chance per tick when running at 1x, scaled by time multiplier)
     const incidentChance = 0.005 * simMultiplier;
     if (Math.random() < incidentChance && speed > 0 && !activeCriticalAlert && !activeBreakdownAlert) {
       await injectRandomAnomaly(trip, vehicle, driver, currentCoords);
@@ -213,7 +213,7 @@ async function tick() {
     // Delivery completed check
     if (newIdx >= trip.route.length - 1) {
       trip.status = 'delivered';
-      trip.actualArrivalTime = new Date().toISOString();
+      trip.actualArrivalTime = new Date();
       vehicle.status = 'idle';
       driver.status = 'available';
 
@@ -230,36 +230,42 @@ async function tick() {
       else if (driver.gamification.points > 8000) driver.gamification.tier = 'Gold';
       else if (driver.gamification.points > 4000) driver.gamification.tier = 'Silver';
 
-      await triggerAlert({
+      const alert = await Alert.create({
         id: `AL-DEL-${trip.id}`,
         tripId: trip.id,
-        category: 'weather_risk', // complete status
+        category: 'weather_risk',
         severity: 'info',
         message: `Trip Completed: Route ${trip.origin.name} to ${trip.destination.name} delivered successfully. Driver gained ${pointsGained} points!`,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
         resolved: true,
-        location: currentCoords
+        location: currentCoords,
+        isDeleted: false
       });
+      triggerAlert(alert);
     }
 
     // Save states
-    await saveVehicle(vehicle);
-    await saveDriver(driver);
-    await saveTrip(trip);
+    await vehicle.save();
+    await driver.save();
+    await trip.save();
   }
 
-  // Socket notification
-  if (ioInstance) {
-    // Generate summarized KPIs for this tick
-    const allTrips = await getTrips();
-    const liveAlerts = (await getAlerts()).filter(a => !a.resolved);
-    const activeCount = activeTrips.length;
-    const completedCount = allTrips.filter(t => t.status === 'delivered').length;
+  broadcastStats(activeTrips);
+}
+
+async function broadcastStats(activeTrips: any[]) {
+  if (!ioInstance) return;
+
+  try {
+    const allTrips = await Trip.find({ isDeleted: false });
+    const liveAlerts = await Alert.find({ resolved: false, isDeleted: false });
+    const vehicles = await Vehicle.find({ isDeleted: false });
+    const drivers = await Driver.find({ isDeleted: false });
     
     // Aggregates
     const revenueSum = allTrips.reduce((acc, t) => acc + t.financials.revenue, 0);
     const costSum = allTrips.reduce((acc, t) => acc + t.financials.cost, 0);
-    const emissionsSum = allTrips.reduce((acc, t) => acc + (t.financials.fuelCost * 2.68), 0); // 2.68 KG CO2 per liter roughly
+    const emissionsSum = allTrips.reduce((acc, t) => acc + (t.financials.fuelCost * 2.68), 0); 
     
     ioInstance.emit('sim-tick', {
       vehicles,
@@ -267,8 +273,8 @@ async function tick() {
       trips: activeTrips,
       alerts: liveAlerts,
       kpis: {
-        activeTripsCount: activeCount,
-        completedTripsCount: completedCount,
+        activeTripsCount: activeTrips.length,
+        completedTripsCount: allTrips.filter(t => t.status === 'delivered').length,
         totalRevenue: revenueSum,
         totalProfit: revenueSum - costSum,
         fleetHealthAvg: Math.round(vehicles.reduce((acc, v) => acc + v.healthScore, 0) / vehicles.length),
@@ -277,43 +283,26 @@ async function tick() {
         multiplier: simMultiplier
       }
     });
+  } catch (error) {
+    console.error('Error broadcasting simulation stats:', error);
   }
 }
 
 // Checks if a trip has an active alert of a certain type
-async function findActiveTripAlert(tripId: string, category: string): Promise<Alert | null> {
-  const alerts = await getAlerts();
-  const alert = alerts.find(a => a.tripId === tripId && a.category === category && !a.resolved);
+async function findActiveTripAlert(tripId: string, category: any): Promise<any | null> {
+  const alert = await Alert.findOne({ tripId, category, resolved: false });
   return alert || null;
 }
 
 // Triggers alert and pushes to sockets
-async function triggerAlert(alert: Alert) {
-  await saveAlert(alert);
+function triggerAlert(alert: any) {
   if (ioInstance) {
     ioInstance.emit('alert-triggered', alert);
   }
 }
 
-// Injects an incident manually
-export async function manualInjectIncident(tripId: string, category: string): Promise<Alert | null> {
-  const trips = await getTrips();
-  const trip = trips.find(t => t.id === tripId);
-  if (!trip || trip.status === 'delivered' || trip.status === 'cancelled') return null;
-
-  const vehicles = await getVehicles();
-  const drivers = await getDrivers();
-  const vehicle = vehicles.find(v => v.id === trip.vehicleId);
-  const driver = drivers.find(d => d.id === trip.driverId);
-
-  if (!vehicle || !driver) return null;
-
-  const currentCoords = trip.route[trip.currentRouteIndex];
-  return await injectRandomAnomaly(trip, vehicle, driver, currentCoords, category);
-}
-
 // Random incident engine
-async function injectRandomAnomaly(trip: Trip, vehicle: Vehicle, driver: Driver, location: GPSCoordinate, forcedCategory?: string): Promise<Alert> {
+async function injectRandomAnomaly(trip: any, vehicle: any, driver: any, location: GPSCoordinate, forcedCategory?: string): Promise<any> {
   const categories = ['speeding', 'harsh_braking', 'route_deviation', 'fuel_theft', 'maintenance', 'accident', 'weather_risk', 'traffic_delay'];
   const category = forcedCategory || categories[Math.floor(Math.random() * categories.length)];
 
@@ -329,42 +318,42 @@ async function injectRandomAnomaly(trip: Trip, vehicle: Vehicle, driver: Driver,
       message = `Speed Violation: Vehicle ${vehicle.id} driving at 115 KM/H in 90 KM/H zone. Driver ${driver.name} flagged.`;
       break;
     case 'harsh_braking':
-      vehicle.gps.speed = Math.max(10, vehicle.gps.speed - 45); // sudden deceleration
+      vehicle.gps.speed = Math.max(10, vehicle.gps.speed - 45); 
       driver.safetyScore = Math.max(0, driver.safetyScore - 5);
-      message = `Harsh Braking Event: Overt telemetry deceleration captured for ${vehicle.id}. Safety score reduced.`;
+      message = `Harsh Braking Event: Deceleration alert generated for vehicle ${vehicle.id}.`;
       break;
     case 'route_deviation':
-      message = `Geofence Violation: Vehicle ${vehicle.id} has deviated from the optimized AI route path.`;
+      message = `Geofence Violation: Vehicle ${vehicle.id} has deviated from route.`;
       severity = 'info';
       break;
     case 'fuel_theft':
-      vehicle.currentFuel = Math.max(10, vehicle.currentFuel - 65); // sudden fuel level reduction
-      message = `Security Alert: Severe fuel drop (65 Liters) detected on ${vehicle.id}. Potential fuel theft at coordinate grid.`;
+      vehicle.currentFuel = Math.max(10, vehicle.currentFuel - 65); 
+      message = `Security Alert: Severe fuel drop (65L) detected on ${vehicle.id}. Potential fuel theft.`;
       severity = 'critical';
       break;
     case 'maintenance':
       vehicle.healthScore = Math.max(30, vehicle.healthScore - 35);
       trip.status = 'delayed';
-      message = `Mechanical Fault: Critical coolant leak and check engine light active on vehicle ${vehicle.id}. Delayed.`;
+      message = `Mechanical Fault: Check engine light active on vehicle ${vehicle.id}.`;
       break;
     case 'accident':
       vehicle.healthScore = Math.max(10, vehicle.healthScore - 55);
       vehicle.gps.speed = 0;
       trip.status = 'delayed';
       driver.status = 'suspended';
-      message = `Collision Warning: Vehicle ${vehicle.id} reported impact crash at coordinates. Emergency crews alerted.`;
+      message = `Collision Warning: Vehicle ${vehicle.id} reported impact crash. Driver suspended.`;
       severity = 'critical';
       break;
     case 'weather_risk':
-      message = `Hazard Warning: Severe thunder-cell storm tracking directly over Route ${trip.id}. Truck slowed to 45 KM/H.`;
+      message = `Hazard Warning: Severe storm tracking directly over Route ${trip.id}.`;
       break;
     case 'traffic_delay':
       trip.status = 'delayed';
-      message = `Transit Congestion: Construction zone and multi-vehicle accident ahead. Route delay predicted +45 mins.`;
+      message = `Transit Congestion: Traffic delays predicted +45 mins.`;
       break;
   }
 
-  const alert: Alert = {
+  const alert = await Alert.create({
     id: `AL-${category.slice(0, 3).toUpperCase()}-${Date.now()}`,
     tripId: trip.id,
     vehicleId: vehicle.id,
@@ -372,15 +361,12 @@ async function injectRandomAnomaly(trip: Trip, vehicle: Vehicle, driver: Driver,
     category: category as any,
     severity,
     message,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date(),
     resolved: false,
-    location
-  };
+    location,
+    isDeleted: false
+  });
 
-  await triggerAlert(alert);
-  await saveTrip(trip);
-  await saveVehicle(vehicle);
-  await saveDriver(driver);
-
+  triggerAlert(alert);
   return alert;
 }

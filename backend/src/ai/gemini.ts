@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { getVehicles, getDrivers, getTrips, getAlerts, getMaintenanceLogs, getFuelRecords, getSimulationConfig } from '../db';
+import { Vehicle, Driver, Trip, Alert, MaintenanceRecord, FuelLog } from '../models';
+import { getSimulationConfig } from '../db';
 import { processLocalNLPQuery, AIResponse } from './nlp-agent';
 
 const apiKey = process.env.GEMINI_API_KEY || '';
@@ -14,11 +15,11 @@ export async function askAiCopilot(query: string): Promise<AIResponse> {
     const genAI = new GoogleGenerativeAI(apiKey);
     
     // Gather database state for AI context
-    const vehicles = await getVehicles();
-    const drivers = await getDrivers();
-    const trips = await getTrips();
-    const alerts = await getAlerts();
-    const maintenance = await getMaintenanceLogs();
+    const vehicles = await Vehicle.find({ isDeleted: false });
+    const drivers = await Driver.find({ isDeleted: false });
+    const trips = await Trip.find({ isDeleted: false });
+    const alerts = await Alert.find({ isDeleted: false });
+    const maintenance = await MaintenanceRecord.find({ isDeleted: false });
     const config = await getSimulationConfig();
 
     const systemPrompt = `
@@ -36,7 +37,7 @@ ACTIVE TRIPS:
 ${JSON.stringify(trips.filter(t => t.status === 'in-transit' || t.status === 'delayed').map(t => ({ id: t.id, origin: t.origin.name, dest: t.destination.name, status: t.status, cargo: t.cargoType, eta: t.estimatedArrivalTime, profit: t.financials.profit })))}
 
 ACTIVE ALERTS:
-${JSON.stringify(alerts.filter(a => !a.resolved).map(a => ({ id: a.id, vehicle: a.vehicleId, driver: a.driverId, category: a.category, msg: a.message, severity: a.severity })))}
+${JSON.stringify(alerts.filter((a: any) => !a.resolved).map((a: any) => ({ id: a.id, vehicle: a.vehicleId, driver: a.driverId, category: a.category, msg: a.message, severity: a.severity })))}
 
 SIMULATION SETTINGS:
 ${JSON.stringify(config)}
