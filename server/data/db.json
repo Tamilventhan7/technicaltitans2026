@@ -2,7 +2,7 @@
   "vehicles": [
     {
       "id": "TRK-01",
-      "plateNumber": "TX-892A",
+      "plateNumber": "MH-12-AQ-8920",
       "status": "idle",
       "type": "Heavy Duty Truck",
       "fuelCapacity": 400,
@@ -16,15 +16,15 @@
         "batteryVoltage": 14.1
       },
       "gps": {
-        "latitude": 41.8781,
-        "longitude": -87.6298,
+        "latitude": 19.076,
+        "longitude": 72.8777,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-02",
-      "plateNumber": "NY-442B",
+      "plateNumber": "DL-01-CA-4421",
       "status": "idle",
       "type": "Reefer",
       "fuelCapacity": 350,
@@ -38,15 +38,15 @@
         "batteryVoltage": 13.8
       },
       "gps": {
-        "latitude": 40.7128,
-        "longitude": -74.006,
+        "latitude": 28.6139,
+        "longitude": 77.209,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-03",
-      "plateNumber": "CA-102C",
+      "plateNumber": "KA-03-MB-1023",
       "status": "idle",
       "type": "Medium Cargo",
       "fuelCapacity": 250,
@@ -60,15 +60,15 @@
         "batteryVoltage": 14
       },
       "gps": {
-        "latitude": 34.0522,
-        "longitude": -118.2437,
+        "latitude": 12.9716,
+        "longitude": 77.5946,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-04",
-      "plateNumber": "TX-771D",
+      "plateNumber": "TN-07-JK-7711",
       "status": "idle",
       "type": "Sprinter Van",
       "fuelCapacity": 100,
@@ -82,15 +82,15 @@
         "batteryVoltage": 14.2
       },
       "gps": {
-        "latitude": 32.7767,
-        "longitude": -96.797,
+        "latitude": 13.0827,
+        "longitude": 80.2707,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-05",
-      "plateNumber": "WA-554E",
+      "plateNumber": "WB-02-DF-5544",
       "status": "idle",
       "type": "Heavy Duty Truck",
       "fuelCapacity": 400,
@@ -104,15 +104,15 @@
         "batteryVoltage": 13.5
       },
       "gps": {
-        "latitude": 47.6062,
-        "longitude": -122.3321,
+        "latitude": 22.5726,
+        "longitude": 88.3639,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-06",
-      "plateNumber": "IL-910F",
+      "plateNumber": "MH-14-GH-9102",
       "status": "idle",
       "type": "Reefer",
       "fuelCapacity": 350,
@@ -126,15 +126,15 @@
         "batteryVoltage": 13.4
       },
       "gps": {
-        "latitude": 41.8781,
-        "longitude": -87.6298,
+        "latitude": 19.076,
+        "longitude": 72.8777,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-07",
-      "plateNumber": "NY-332G",
+      "plateNumber": "DL-03-XY-3321",
       "status": "idle",
       "type": "Heavy Duty Truck",
       "fuelCapacity": 400,
@@ -148,15 +148,15 @@
         "batteryVoltage": 12.8
       },
       "gps": {
-        "latitude": 40.7128,
-        "longitude": -74.006,
+        "latitude": 28.6139,
+        "longitude": 77.209,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-08",
-      "plateNumber": "CA-993H",
+      "plateNumber": "KA-51-EF-9931",
       "status": "idle",
       "type": "Medium Cargo",
       "fuelCapacity": 250,
@@ -170,15 +170,15 @@
         "batteryVoltage": 13.9
       },
       "gps": {
-        "latitude": 34.0522,
-        "longitude": -118.2437,
+        "latitude": 12.9716,
+        "longitude": 77.5946,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-09",
-      "plateNumber": "TX-210I",
+      "plateNumber": "TN-09-PQ-2101",
       "status": "idle",
       "type": "Heavy Duty Truck",
       "fuelCapacity": 400,
@@ -192,15 +192,15 @@
         "batteryVoltage": 14.3
       },
       "gps": {
-        "latitude": 32.7767,
-        "longitude": -96.797,
+        "latitude": 13.0827,
+        "longitude": 80.2707,
         "speed": 0,
         "heading": 0
       }
     },
     {
       "id": "TRK-10",
-      "plateNumber": "WA-808J",
+      "plateNumber": "WB-04-TR-8080",
       "status": "idle",
       "type": "Sprinter Van",
       "fuelCapacity": 100,
@@ -214,8 +214,8 @@
         "batteryVoltage": 13.7
       },
       "gps": {
-        "latitude": 47.6062,
-        "longitude": -122.3321,
+        "latitude": 22.5726,
+        "longitude": 88.3639,
         "speed": 0,
         "heading": 0
       }
@@ -224,8 +224,8 @@
   "drivers": [
     {
       "id": "DRV-01",
-      "name": "James Carter",
-      "licenseNumber": "DL-TX88910",
+      "name": "Rajesh Sharma",
+      "licenseNumber": "DL-MH12-88910",
       "licenseExpiry": "2028-11-20",
       "status": "available",
       "rating": 4.9,
@@ -246,8 +246,8 @@
     },
     {
       "id": "DRV-02",
-      "name": "Sarah Jenkins",
-      "licenseNumber": "DL-NY22104",
+      "name": "Amit Patel",
+      "licenseNumber": "DL-DL01-22104",
       "licenseExpiry": "2027-04-12",
       "status": "available",
       "rating": 4.8,
@@ -267,8 +267,8 @@
     },
     {
       "id": "DRV-03",
-      "name": "Marcus Vance",
-      "licenseNumber": "DL-CA99238",
+      "name": "Vijay Kumar",
+      "licenseNumber": "DL-KA03-99238",
       "licenseExpiry": "2026-09-30",
       "status": "available",
       "rating": 4.7,
@@ -287,8 +287,8 @@
     },
     {
       "id": "DRV-04",
-      "name": "Carlos Gomez",
-      "licenseNumber": "DL-TX55210",
+      "name": "Anil Deshmukh",
+      "licenseNumber": "DL-TN07-55210",
       "licenseExpiry": "2027-10-15",
       "status": "available",
       "rating": 4.2,
@@ -306,8 +306,8 @@
     },
     {
       "id": "DRV-05",
-      "name": "Emily Taylor",
-      "licenseNumber": "DL-WA33490",
+      "name": "Sanjay Dutt",
+      "licenseNumber": "DL-WB02-33490",
       "licenseExpiry": "2026-07-28",
       "status": "available",
       "rating": 4.6,
@@ -325,8 +325,8 @@
     },
     {
       "id": "DRV-06",
-      "name": "Robert Chen",
-      "licenseNumber": "DL-IL40412",
+      "name": "Karan Singh",
+      "licenseNumber": "DL-MH14-40412",
       "licenseExpiry": "2029-01-05",
       "status": "available",
       "rating": 4.9,
@@ -346,8 +346,8 @@
     },
     {
       "id": "DRV-07",
-      "name": "David Miller",
-      "licenseNumber": "DL-NY77319",
+      "name": "Rahul Dravid",
+      "licenseNumber": "DL-DL03-77319",
       "licenseExpiry": "2028-06-18",
       "status": "available",
       "rating": 4.5,
@@ -366,8 +366,8 @@
     },
     {
       "id": "DRV-08",
-      "name": "Lisa Anderson",
-      "licenseNumber": "DL-CA11029",
+      "name": "Pradeep Chandran",
+      "licenseNumber": "DL-TN09-11029",
       "licenseExpiry": "2027-08-22",
       "status": "available",
       "rating": 4.7,
@@ -387,11 +387,11 @@
   ],
   "warehouses": [
     {
-      "id": "WH-CHI",
-      "name": "Chicago Logistic Hub",
+      "id": "WH-MUM",
+      "name": "Mumbai Logistics Hub",
       "location": {
-        "lat": 41.8781,
-        "lng": -87.6298
+        "lat": 19.076,
+        "lng": 72.8777
       },
       "capacity": 1500,
       "inventoryLevel": 1120,
@@ -399,11 +399,11 @@
       "outgoingShipments": 12
     },
     {
-      "id": "WH-NYC",
-      "name": "New York Port Depot",
+      "id": "WH-DEL",
+      "name": "Delhi Dispatch Center",
       "location": {
-        "lat": 40.7128,
-        "lng": -74.006
+        "lat": 28.6139,
+        "lng": 77.209
       },
       "capacity": 2000,
       "inventoryLevel": 1450,
@@ -411,11 +411,11 @@
       "outgoingShipments": 18
     },
     {
-      "id": "WH-LAX",
-      "name": "Los Angeles Freight Terminal",
+      "id": "WH-BLR",
+      "name": "Bangalore Freight Terminal",
       "location": {
-        "lat": 34.0522,
-        "lng": -118.2437
+        "lat": 12.9716,
+        "lng": 77.5946
       },
       "capacity": 1800,
       "inventoryLevel": 980,
@@ -423,11 +423,11 @@
       "outgoingShipments": 7
     },
     {
-      "id": "WH-DFW",
-      "name": "Dallas Dispatch Yard",
+      "id": "WH-MAA",
+      "name": "Chennai Port Depot",
       "location": {
-        "lat": 32.7767,
-        "lng": -96.797
+        "lat": 13.0827,
+        "lng": 80.2707
       },
       "capacity": 1200,
       "inventoryLevel": 800,
@@ -435,11 +435,11 @@
       "outgoingShipments": 11
     },
     {
-      "id": "WH-SEA",
-      "name": "Seattle Port Gateway",
+      "id": "WH-CCU",
+      "name": "Kolkata Cargo Gateway",
       "location": {
-        "lat": 47.6062,
-        "lng": -122.3321
+        "lat": 22.5726,
+        "lng": 88.3639
       },
       "capacity": 1000,
       "inventoryLevel": 620,
@@ -455,7 +455,7 @@
       "category": "maintenance",
       "severity": "warning",
       "message": "Engine Temperature High (98°C). Maintenance recommended.",
-      "timestamp": "2026-07-12T07:46:18.304Z",
+      "timestamp": "2026-07-12T09:05:15.577Z",
       "resolved": false
     },
     {
@@ -464,7 +464,7 @@
       "category": "maintenance",
       "severity": "info",
       "message": "Driver License DL-WA33490 expires in 16 days.",
-      "timestamp": "2026-07-12T06:46:18.305Z",
+      "timestamp": "2026-07-12T08:05:15.578Z",
       "resolved": false
     }
   ],
@@ -519,32 +519,32 @@
   ],
   "auditLogs": [
     {
-      "id": "AUD-940",
+      "id": "AUD-749",
       "action": "System Reset",
       "details": "Database reset back to baseline seed settings.",
       "user": "Admin",
-      "timestamp": "2026-07-12T08:56:39.688Z"
+      "timestamp": "2026-07-12T10:17:24.578Z"
     },
     {
       "id": "AUD-101",
       "action": "User Login",
       "details": "Operator admin@transitops.com logged in successfully from IP 127.0.0.1.",
       "user": "Admin",
-      "timestamp": "2026-07-12T03:46:18.305Z"
+      "timestamp": "2026-07-12T05:05:15.578Z"
     },
     {
       "id": "AUD-102",
       "action": "Simulation Config Update",
       "details": "Weather severity updated to clear.",
       "user": "Admin",
-      "timestamp": "2026-07-12T04:46:18.305Z"
+      "timestamp": "2026-07-12T06:05:15.578Z"
     },
     {
       "id": "AUD-103",
       "action": "Smart Dispatch Pairing",
       "details": "AI recommended route pairing generated for CHI -> NYC.",
       "user": "Dispatcher",
-      "timestamp": "2026-07-12T06:46:18.305Z"
+      "timestamp": "2026-07-12T08:05:15.578Z"
     }
   ],
   "expenses": [

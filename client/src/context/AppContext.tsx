@@ -54,6 +54,10 @@ interface AppContextProps {
   language: 'en' | 'hi' | 'ta';
   setLanguage: (lang: 'en' | 'hi' | 'ta') => void;
   t: (key: string) => string;
+
+  // Color themes
+  theme: 'indigo' | 'saffron' | 'tricolor' | 'royal';
+  setTheme: (theme: 'indigo' | 'saffron' | 'tricolor' | 'royal') => void;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -84,6 +88,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // i18n translations
   const [language, setLanguage] = useState<'en' | 'hi' | 'ta'>('en');
+
+  // Color theme
+  const [theme, setThemeState] = useState<'indigo' | 'saffron' | 'tricolor' | 'royal'>(() => {
+    return (localStorage.getItem('transitops-theme') as any) || 'indigo';
+  });
+
+  const setTheme = (newTheme: 'indigo' | 'saffron' | 'tricolor' | 'royal') => {
+    setThemeState(newTheme);
+    localStorage.setItem('transitops-theme', newTheme);
+  };
+
+  useEffect(() => {
+    document.body.classList.remove('theme-indigo', 'theme-saffron', 'theme-tricolor', 'theme-royal');
+    document.body.classList.add(`theme-${theme}`);
+  }, [theme]);
 
   const translations: Record<'en' | 'hi' | 'ta', Record<string, string>> = {
     en: {
@@ -435,7 +454,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       deleteDriver,
       language,
       setLanguage,
-      t
+      t,
+      theme,
+      setTheme
     }}>
       {children}
     </AppContext.Provider>

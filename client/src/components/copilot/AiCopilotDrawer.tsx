@@ -570,34 +570,41 @@ export const AiCopilotDrawer: React.FC<{ inline?: boolean }> = ({ inline = false
   // ── Inline mode (embedded in dashboard) ──────────────────────────────────
   if (inline) {
     return (
-      <div className="glass-panel rounded-2xl border border-slate-800/80 flex flex-col h-full overflow-hidden">
+      <div className="glass-panel rounded-2.5xl border border-slate-850 flex flex-col h-full overflow-hidden shadow-2xl relative animate-fade-in">
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-500/25 to-indigo-500/0" />
+        
         {/* Header */}
-        <div className="px-5 py-4 border-b border-slate-800/60 bg-slate-900/20 flex items-center space-x-3">
-          <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+        <div className="px-5 py-4 border-b border-slate-900 bg-slate-950/20 flex items-center space-x-3 shrink-0">
+          <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl relative">
             <Bot className="w-4 h-4 text-blue-400" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-slate-950" />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-200">AI Copilot</p>
+            <p className="text-xs font-bold text-slate-200 tracking-tight">Enterprise AI Copilot</p>
             <div className="flex items-center space-x-1 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] text-slate-500">Online · Context-aware</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Active · Context Aware</span>
             </div>
           </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3.5 custom-scrollbar">
           {messages.map(msg => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[90%] ${msg.sender === 'user' ? 'bg-blue-600/20 border-blue-500/25 text-blue-100' : 'bg-slate-800/40 border-slate-700/40 text-slate-200'} border rounded-2xl px-4 py-3`}>
-                <p className="text-[11px] leading-relaxed whitespace-pre-line">{msg.text.replace(/\*\*/g, '').replace(/###\s*/g, '')}</p>
+              <div className={`max-w-[88%] text-[11px] leading-relaxed whitespace-pre-line ${
+                msg.sender === 'user' 
+                  ? 'bg-gradient-to-tr from-blue-600/10 to-indigo-600/10 border border-blue-500/20 text-slate-100 rounded-2xl rounded-tr-none px-3.5 py-2.5 shadow-[0_4px_12px_rgba(59,130,246,0.03)]' 
+                  : 'bg-slate-905 border border-slate-850 text-slate-300 rounded-2xl rounded-tl-none px-3.5 py-2.5 shadow-inner'
+              }`}>
+                <p className="font-semibold text-slate-250 leading-relaxed">{msg.text.replace(/\*\*/g, '').replace(/###\s*/g, '')}</p>
                 <WidgetRenderer widget={msg.widget} onActionTrigger={handleActionTrigger} />
               </div>
             </div>
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-slate-800/40 border border-slate-700/40 rounded-2xl px-4 py-3 flex items-center space-x-2">
+              <div className="bg-slate-905 border border-slate-850 rounded-2xl rounded-tl-none px-4 py-2.5 flex items-center space-x-1.5 animate-pulse">
                 {[0, 1, 2].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />)}
               </div>
             </div>
@@ -606,12 +613,12 @@ export const AiCopilotDrawer: React.FC<{ inline?: boolean }> = ({ inline = false
         </div>
 
         {/* Suggestions */}
-        <div className="px-3 py-2 border-t border-slate-800/40 flex flex-wrap gap-1.5">
+        <div className="px-3.5 py-2 border-t border-slate-900 flex flex-wrap gap-1.5 bg-slate-950/20 shrink-0">
           {SUGGESTIONS.slice(0, 3).map(s => {
             const Icon = s.icon;
             return (
               <button key={s.query} onClick={() => sendMessage(s.query)}
-                className="flex items-center space-x-1 px-2 py-1 text-[9px] font-bold text-slate-400 bg-slate-800/50 border border-slate-700/40 rounded-lg hover:bg-slate-700/50 hover:text-slate-200 transition-all">
+                className="flex items-center space-x-1 px-2.5 py-1.5 text-[9px] font-bold text-slate-400 bg-slate-950/60 border border-slate-850 rounded-lg hover:bg-slate-900/80 hover:text-slate-200 transition-all">
                 <Icon className="w-2.5 h-2.5" />
                 <span>{s.label}</span>
               </button>
@@ -620,13 +627,13 @@ export const AiCopilotDrawer: React.FC<{ inline?: boolean }> = ({ inline = false
         </div>
 
         {/* Input */}
-        <div className="p-3 border-t border-slate-800/60">
-          <div className="flex items-center space-x-2 bg-slate-900/60 border border-slate-800 rounded-xl px-3 py-2">
+        <div className="p-3 border-t border-slate-900 bg-slate-950/40 shrink-0">
+          <div className="flex items-center space-x-2 bg-slate-950 border border-slate-850 focus-within:border-blue-500/30 rounded-xl px-3 py-2 transition-colors">
             <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown}
-              placeholder="Ask me anything..." className="flex-1 bg-transparent text-[11px] text-slate-200 placeholder-slate-600 outline-none" />
+              placeholder="Ask fleet telemetry..." className="flex-1 bg-transparent text-[11px] text-slate-200 placeholder-slate-650 outline-none" />
             <button
               onClick={toggleListening}
-              className={`p-1.5 rounded-lg transition-all ${isListening ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+              className={`p-1.5 rounded-lg transition-all ${isListening ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' : 'text-slate-500 hover:text-slate-350 hover:bg-slate-900'}`}
             >
               {isListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
             </button>
@@ -649,10 +656,12 @@ export const AiCopilotDrawer: React.FC<{ inline?: boolean }> = ({ inline = false
           <motion.button
             initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-[0_8px_32px_rgba(59,130,246,0.4)] hover:shadow-[0_12px_40px_rgba(59,130,246,0.55)] transition-all hover:scale-110"
+            className="fixed bottom-6 right-6 z-50 w-13 h-13 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-[0_8px_30px_rgba(59,130,246,0.3)] hover:shadow-[0_12px_36px_rgba(59,130,246,0.45)] transition-all hover:scale-105"
           >
-            <Bot className="w-6 h-6 text-white" />
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-950 animate-pulse" />
+            <Bot className="w-5.5 h-5.5 text-white" />
+            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+            </span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -661,60 +670,68 @@ export const AiCopilotDrawer: React.FC<{ inline?: boolean }> = ({ inline = false
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: 40, scale: 0.95 }}
+            initial={{ opacity: 0, x: 40, scale: 0.96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 40, scale: 0.95 }}
+            exit={{ opacity: 0, x: 40, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className={`fixed bottom-6 right-6 z-50 flex flex-col glass-panel border border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-all ${isExpanded ? 'w-[520px] h-[75vh]' : 'w-[360px] h-[520px]'}`}
+            className={`fixed bottom-6 right-6 z-50 flex flex-col glass-panel border border-slate-850 rounded-2.5xl shadow-2xl overflow-hidden transition-all ${isExpanded ? 'w-[520px] h-[75vh]' : 'w-[360px] h-[520px]'}`}
           >
+            {/* Shimmer line */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-500/30 to-indigo-500/0" />
+
             {/* Header */}
-            <div className="px-5 py-3.5 border-b border-slate-800/60 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 flex items-center justify-between shrink-0">
+            <div className="px-5 py-3.5 border-b border-slate-900 bg-slate-950/20 flex items-center justify-between shrink-0">
               <div className="flex items-center space-x-2.5">
-                <div className="p-1.5 bg-blue-500/15 border border-blue-500/25 rounded-xl">
+                <div className="p-1.5 bg-blue-500/10 border border-blue-500/20 rounded-xl relative">
                   <Bot className="w-4 h-4 text-blue-400" />
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-slate-950" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-slate-200">TransitOps AI Copilot</p>
+                  <p className="text-xs font-bold text-slate-200 tracking-tight">TransitOps AI Copilot</p>
                   <div className="flex items-center space-x-1 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] text-slate-500">Analyzing live fleet data</span>
+                    <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Analyzing live Indian fleet data</span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-1.5">
-                <button onClick={() => setIsExpanded(!isExpanded)} className="p-1.5 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all">
-                  {isExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+              <div className="flex items-center space-x-1">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="p-1.5 text-slate-500 hover:text-slate-350 hover:bg-slate-900 rounded-lg transition-all">
+                  {isExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5 text-slate-300" />}
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-all">
+                <button onClick={() => setIsOpen(false)} className="p-1.5 text-slate-500 hover:text-slate-350 hover:bg-slate-900 rounded-lg transition-all">
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 custom-scrollbar">
               {messages.map(msg => (
                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {msg.sender === 'ai' && (
-                    <div className="w-6 h-6 rounded-lg bg-blue-500/15 border border-blue-500/20 flex items-center justify-center mr-2 mt-0.5 shrink-0">
-                      <Sparkles className="w-3 h-3 text-blue-400" />
+                    <div className="w-6.5 h-6.5 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mr-2 mt-0.5 shrink-0">
+                      <Sparkles className="w-3 h-3 text-blue-400 animate-pulse" />
                     </div>
                   )}
-                  <div className={`max-w-[85%] ${msg.sender === 'user' ? 'bg-blue-600/20 border-blue-500/25' : 'bg-slate-800/40 border-slate-700/40'} border rounded-2xl px-4 py-3`}>
-                    <p className="text-[11px] text-slate-200 leading-relaxed whitespace-pre-line">
+                  <div className={`max-w-[85%] text-[11px] leading-relaxed ${
+                    msg.sender === 'user' 
+                      ? 'bg-gradient-to-tr from-blue-600/10 to-indigo-600/10 border border-blue-500/20 text-slate-100 rounded-2xl rounded-tr-none px-3.5 py-2.5 shadow-[0_4px_12px_rgba(59,130,246,0.03)]' 
+                      : 'bg-slate-900/40 border border-slate-850 text-slate-300 rounded-2xl rounded-tl-none px-3.5 py-2.5 shadow-inner'
+                  }`}>
+                    <p className="font-semibold text-slate-200">
                       {msg.text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/###\s*/g, '')}
                     </p>
                     <WidgetRenderer widget={msg.widget} onActionTrigger={handleActionTrigger} />
-                    <p className="text-[8px] text-slate-600 mt-1.5">{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p className="text-[8px] text-slate-655 mt-1.5 font-mono">{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 </div>
               ))}
               {loading && (
-                <div className="flex justify-start">
-                  <div className="w-6 h-6 rounded-lg bg-blue-500/15 border border-blue-500/20 flex items-center justify-center mr-2 shrink-0">
+                <div className="flex justify-start animate-pulse">
+                  <div className="w-6.5 h-6.5 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mr-2 shrink-0">
                     <Sparkles className="w-3 h-3 text-blue-400 animate-pulse" />
                   </div>
-                  <div className="bg-slate-800/40 border border-slate-700/40 rounded-2xl px-4 py-3 flex items-center space-x-1.5">
+                  <div className="bg-slate-900/60 border border-slate-850 rounded-2xl rounded-tl-none px-4 py-2.5 flex items-center space-x-1.5">
                     {[0, 1, 2].map(i => (
                       <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
                     ))}
@@ -725,12 +742,12 @@ export const AiCopilotDrawer: React.FC<{ inline?: boolean }> = ({ inline = false
             </div>
 
             {/* Suggestions */}
-            <div className="px-4 py-2 border-t border-slate-800/40 flex flex-wrap gap-1.5">
+            <div className="px-4 py-2 border-t border-slate-900 flex flex-wrap gap-1.5 bg-slate-950/20 shrink-0">
               {SUGGESTIONS.map(s => {
                 const Icon = s.icon;
                 return (
                   <button key={s.query} onClick={() => sendMessage(s.query)}
-                    className="flex items-center space-x-1.5 px-2.5 py-1.5 text-[9px] font-bold text-slate-400 bg-slate-800/50 border border-slate-700/40 rounded-lg hover:bg-slate-700/60 hover:text-slate-200 transition-all">
+                    className="flex items-center space-x-1 px-2.5 py-1.5 text-[9px] font-bold text-slate-400 bg-slate-950/60 border border-slate-850 rounded-lg hover:bg-slate-900 hover:text-slate-200 transition-all">
                     <Icon className="w-2.5 h-2.5" />
                     <span>{s.label}</span>
                   </button>
@@ -739,20 +756,20 @@ export const AiCopilotDrawer: React.FC<{ inline?: boolean }> = ({ inline = false
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-slate-800/60 shrink-0">
-              <div className="flex items-center space-x-2 bg-slate-900/60 border border-slate-700/60 focus-within:border-blue-500/40 rounded-xl px-3 py-2.5 transition-colors">
+            <div className="p-4 border-t border-slate-900 bg-slate-950/40 shrink-0">
+              <div className="flex items-center space-x-2 bg-slate-950 border border-slate-850 focus-within:border-blue-500/30 rounded-xl px-3 py-2.5 transition-colors">
                 <input
                   ref={inputRef}
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask about fleet, drivers, maintenance..."
-                  className="flex-1 bg-transparent text-[11px] text-slate-200 placeholder-slate-600 outline-none"
+                  placeholder="Ask about fleet, drivers, metrics..."
+                  className="flex-1 bg-transparent text-[11px] text-slate-200 placeholder-slate-655 outline-none"
                 />
                 <div className="flex items-center space-x-1.5">
                   <button
                     onClick={toggleListening}
-                    className={`p-1.5 rounded-lg transition-all ${isListening ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}`}
+                    className={`p-1.5 rounded-lg transition-all ${isListening ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' : 'text-slate-500 hover:text-slate-350 hover:bg-slate-900'}`}
                   >
                     {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
                   </button>

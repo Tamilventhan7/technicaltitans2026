@@ -7,157 +7,139 @@ export interface RouteDefinition {
 }
 
 export const HUBS: Record<string, { name: string } & GPSCoordinate> = {
-  'WH-CHI': { name: 'Chicago Logistic Hub', lat: 41.8781, lng: -87.6298 },
-  'WH-NYC': { name: 'New York Port Depot', lat: 40.7128, lng: -74.0060 },
-  'WH-LAX': { name: 'Los Angeles Freight Terminal', lat: 34.0522, lng: -118.2437 },
-  'WH-DFW': { name: 'Dallas Dispatch Yard', lat: 32.7767, lng: -96.7970 },
-  'WH-SEA': { name: 'Seattle Port Gateway', lat: 47.6062, lng: -122.3321 }
+  'WH-MUM': { name: 'Mumbai Logistics Hub', lat: 19.0760, lng: 72.8777 },
+  'WH-DEL': { name: 'Delhi Dispatch Center', lat: 28.6139, lng: 77.2090 },
+  'WH-BLR': { name: 'Bangalore Freight Terminal', lat: 12.9716, lng: 77.5946 },
+  'WH-MAA': { name: 'Chennai Port Depot', lat: 13.0827, lng: 80.2707 },
+  'WH-CCU': { name: 'Kolkata Cargo Gateway', lat: 22.5726, lng: 88.3639 }
 };
 
-// Route chains with key highway waypoints for curvy, realistic mapping polylines
+// Route chains with key highway waypoints for curvy, realistic mapping polylines inside India
 export const ROUTE_WAYPOINTS: RouteDefinition[] = [
   {
-    origin: 'WH-CHI',
-    destination: 'WH-NYC',
+    origin: 'WH-MUM',
+    destination: 'WH-DEL',
     waypoints: [
-      { lat: 41.8781, lng: -87.6298 }, // Chicago
-      { lat: 41.6764, lng: -86.2520 }, // South Bend
-      { lat: 41.4993, lng: -81.6944 }, // Cleveland
-      { lat: 41.1403, lng: -80.0811 }, // Mercer
-      { lat: 40.8509, lng: -77.8600 }, // State College
-      { lat: 40.6582, lng: -75.4744 }, // Allentown
-      { lat: 40.7128, lng: -74.0060 }  // New York
+      { lat: 19.0760, lng: 72.8777 }, // Mumbai
+      { lat: 21.1702, lng: 72.8311 }, // Surat
+      { lat: 22.3072, lng: 73.1812 }, // Vadodara
+      { lat: 23.0225, lng: 72.5714 }, // Ahmedabad
+      { lat: 24.5854, lng: 73.7125 }, // Udaipur
+      { lat: 26.9124, lng: 75.7873 }, // Jaipur
+      { lat: 28.6139, lng: 77.2090 }  // Delhi
     ]
   },
   {
-    origin: 'WH-NYC',
-    destination: 'WH-CHI',
+    origin: 'WH-DEL',
+    destination: 'WH-MUM',
     waypoints: [
-      { lat: 40.7128, lng: -74.0060 },
-      { lat: 40.6582, lng: -75.4744 },
-      { lat: 40.8509, lng: -77.8600 },
-      { lat: 41.1403, lng: -80.0811 },
-      { lat: 41.4993, lng: -81.6944 },
-      { lat: 41.6764, lng: -86.2520 },
-      { lat: 41.8781, lng: -87.6298 }
+      { lat: 28.6139, lng: 77.2090 },
+      { lat: 26.9124, lng: 75.7873 },
+      { lat: 24.5854, lng: 73.7125 },
+      { lat: 23.0225, lng: 72.5714 },
+      { lat: 22.3072, lng: 73.1812 },
+      { lat: 21.1702, lng: 72.8311 },
+      { lat: 19.0760, lng: 72.8777 }
     ]
   },
   {
-    origin: 'WH-CHI',
-    destination: 'WH-SEA',
+    origin: 'WH-MUM',
+    destination: 'WH-BLR',
     waypoints: [
-      { lat: 41.8781, lng: -87.6298 }, // Chicago
-      { lat: 43.0389, lng: -87.9065 }, // Milwaukee
-      { lat: 44.9778, lng: -93.2650 }, // Minneapolis
-      { lat: 46.8083, lng: -100.7837 }, // Bismarck
-      { lat: 45.7833, lng: -108.5007 }, // Billings
-      { lat: 46.8797, lng: -113.9966 }, // Missoula
-      { lat: 47.6588, lng: -117.4260 }, // Spokane
-      { lat: 47.6062, lng: -122.3321 }  // Seattle
+      { lat: 19.0760, lng: 72.8777 }, // Mumbai
+      { lat: 18.5204, lng: 73.8567 }, // Pune
+      { lat: 17.6805, lng: 74.0183 }, // Satara
+      { lat: 16.8524, lng: 74.5564 }, // Sangli
+      { lat: 15.8497, lng: 74.4977 }, // Belgaum
+      { lat: 14.4426, lng: 75.9182 }, // Davanagere
+      { lat: 12.9716, lng: 77.5946 }  // Bangalore
     ]
   },
   {
-    origin: 'WH-SEA',
-    destination: 'WH-CHI',
+    origin: 'WH-BLR',
+    destination: 'WH-MUM',
     waypoints: [
-      { lat: 47.6062, lng: -122.3321 },
-      { lat: 47.6588, lng: -117.4260 },
-      { lat: 46.8797, lng: -113.9966 },
-      { lat: 45.7833, lng: -108.5007 },
-      { lat: 46.8083, lng: -100.7837 },
-      { lat: 44.9778, lng: -93.2650 },
-      { lat: 43.0389, lng: -87.9065 },
-      { lat: 41.8781, lng: -87.6298 }
+      { lat: 12.9716, lng: 77.5946 },
+      { lat: 14.4426, lng: 75.9182 },
+      { lat: 15.8497, lng: 74.4977 },
+      { lat: 16.8524, lng: 74.5564 },
+      { lat: 17.6805, lng: 74.0183 },
+      { lat: 18.5204, lng: 73.8567 },
+      { lat: 19.0760, lng: 72.8777 }
     ]
   },
   {
-    origin: 'WH-LAX',
-    destination: 'WH-DFW',
+    origin: 'WH-DEL',
+    destination: 'WH-BLR',
     waypoints: [
-      { lat: 34.0522, lng: -118.2437 }, // LA
-      { lat: 33.6846, lng: -117.8265 }, // Irvine
-      { lat: 32.7157, lng: -117.1611 }, // San Diego
-      { lat: 32.6927, lng: -114.6276 }, // Yuma
-      { lat: 33.4484, lng: -112.0740 }, // Phoenix
-      { lat: 32.2226, lng: -110.9747 }, // Tucson
-      { lat: 31.7619, lng: -106.4850 }, // El Paso
-      { lat: 31.9973, lng: -102.0779 }, // Midland
-      { lat: 32.4487, lng: -99.7331 },  // Abilene
-      { lat: 32.7767, lng: -96.7970 }   // Dallas
+      { lat: 28.6139, lng: 77.2090 }, // Delhi
+      { lat: 27.1767, lng: 78.0081 }, // Agra
+      { lat: 26.2183, lng: 78.1828 }, // Gwalior
+      { lat: 23.2599, lng: 77.4126 }, // Bhopal
+      { lat: 21.1458, lng: 79.0882 }, // Nagpur
+      { lat: 17.3850, lng: 78.4867 }, // Hyderabad
+      { lat: 14.6819, lng: 77.6006 }, // Anantapur
+      { lat: 12.9716, lng: 77.5946 }  // Bangalore
     ]
   },
   {
-    origin: 'WH-DFW',
-    destination: 'WH-LAX',
+    origin: 'WH-BLR',
+    destination: 'WH-DEL',
     waypoints: [
-      { lat: 32.7767, lng: -96.7970 },
-      { lat: 32.4487, lng: -99.7331 },
-      { lat: 31.9973, lng: -102.0779 },
-      { lat: 31.7619, lng: -106.4850 },
-      { lat: 32.2226, lng: -110.9747 },
-      { lat: 33.4484, lng: -112.0740 },
-      { lat: 32.6927, lng: -114.6276 },
-      { lat: 32.7157, lng: -117.1611 },
-      { lat: 33.6846, lng: -117.8265 },
-      { lat: 34.0522, lng: -118.2437 }
+      { lat: 12.9716, lng: 77.5946 },
+      { lat: 14.6819, lng: 77.6006 },
+      { lat: 17.3850, lng: 78.4867 },
+      { lat: 21.1458, lng: 79.0882 },
+      { lat: 23.2599, lng: 77.4126 },
+      { lat: 26.2183, lng: 78.1828 },
+      { lat: 27.1767, lng: 78.0081 },
+      { lat: 28.6139, lng: 77.2090 }
     ]
   },
   {
-    origin: 'WH-SEA',
-    destination: 'WH-LAX',
+    origin: 'WH-BLR',
+    destination: 'WH-MAA',
     waypoints: [
-      { lat: 47.6062, lng: -122.3321 }, // Seattle
-      { lat: 45.5152, lng: -122.6784 }, // Portland
-      { lat: 44.0521, lng: -123.0868 }, // Eugene
-      { lat: 42.3265, lng: -122.8756 }, // Medford
-      { lat: 40.5865, lng: -122.3917 }, // Redding
-      { lat: 38.5816, lng: -121.4944 }, // Sacramento
-      { lat: 37.7749, lng: -122.4194 }, // San Francisco
-      { lat: 36.6777, lng: -121.6555 }, // Salinas
-      { lat: 34.4208, lng: -119.6982 }, // Santa Barbara
-      { lat: 34.0522, lng: -118.2437 }  // LA
+      { lat: 12.9716, lng: 77.5946 }, // Bangalore
+      { lat: 12.7156, lng: 78.0076 }, // Hosur
+      { lat: 12.9165, lng: 79.1325 }, // Vellore
+      { lat: 12.9784, lng: 79.9770 }, // Sriperumbudur
+      { lat: 13.0827, lng: 80.2707 }  // Chennai (MAA)
     ]
   },
   {
-    origin: 'WH-LAX',
-    destination: 'WH-SEA',
+    origin: 'WH-MAA',
+    destination: 'WH-BLR',
     waypoints: [
-      { lat: 34.0522, lng: -118.2437 },
-      { lat: 34.4208, lng: -119.6982 },
-      { lat: 36.6777, lng: -121.6555 },
-      { lat: 37.7749, lng: -122.4194 },
-      { lat: 38.5816, lng: -121.4944 },
-      { lat: 40.5865, lng: -122.3917 },
-      { lat: 42.3265, lng: -122.8756 },
-      { lat: 44.0521, lng: -123.0868 },
-      { lat: 45.5152, lng: -122.6784 },
-      { lat: 47.6062, lng: -122.3321 }
+      { lat: 13.0827, lng: 80.2707 },
+      { lat: 12.9784, lng: 79.9770 },
+      { lat: 12.9165, lng: 79.1325 },
+      { lat: 12.7156, lng: 78.0076 },
+      { lat: 12.9716, lng: 77.5946 }
     ]
   },
   {
-    origin: 'WH-CHI',
-    destination: 'WH-DFW',
+    origin: 'WH-DEL',
+    destination: 'WH-CCU',
     waypoints: [
-      { lat: 41.8781, lng: -87.6298 }, // Chicago
-      { lat: 40.4406, lng: -88.9898 }, // Bloomington
-      { lat: 38.6270, lng: -90.1994 }, // St Louis
-      { lat: 37.2089, lng: -93.2923 }, // Springfield
-      { lat: 36.1540, lng: -95.9928 }, // Tulsa
-      { lat: 35.4676, lng: -97.5164 }, // OKC
-      { lat: 32.7767, lng: -96.7970 }  // Dallas
+      { lat: 28.6139, lng: 77.2090 }, // Delhi
+      { lat: 26.4499, lng: 80.3319 }, // Kanpur
+      { lat: 25.3176, lng: 82.9739 }, // Varanasi
+      { lat: 25.5941, lng: 85.1376 }, // Patna
+      { lat: 23.7957, lng: 86.4304 }, // Dhanbad
+      { lat: 22.5726, lng: 88.3639 }  // Kolkata (CCU)
     ]
   },
   {
-    origin: 'WH-DFW',
-    destination: 'WH-CHI',
+    origin: 'WH-CCU',
+    destination: 'WH-DEL',
     waypoints: [
-      { lat: 32.7767, lng: -96.7970 },
-      { lat: 35.4676, lng: -97.5164 },
-      { lat: 36.1540, lng: -95.9928 },
-      { lat: 37.2089, lng: -93.2923 },
-      { lat: 38.6270, lng: -90.1994 },
-      { lat: 40.4406, lng: -88.9898 },
-      { lat: 41.8781, lng: -87.6298 }
+      { lat: 22.5726, lng: 88.3639 },
+      { lat: 23.7957, lng: 86.4304 },
+      { lat: 25.5941, lng: 85.1376 },
+      { lat: 25.3176, lng: 82.9739 },
+      { lat: 26.4499, lng: 80.3319 },
+      { lat: 28.6139, lng: 77.2090 }
     ]
   }
 ];

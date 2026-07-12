@@ -15,19 +15,24 @@ export const MapView: React.FC = () => {
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
 
-    // US central view coordinates
+    // India central view coordinates
     const map = L.map(mapRef.current, {
       zoomControl: true,
       attributionControl: true
-    }).setView([39.8283, -98.5795], 4);
+    }).setView([20.5937, 78.9629], 5);
 
     // OpenStreetMap-powered Dark Matter tile layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
       maxZoom: 20,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     mapInstance.current = map;
+
+    // Fix map container layout dimensions after render
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 250);
 
     return () => {
       if (mapInstance.current) {
@@ -202,6 +207,22 @@ export const MapView: React.FC = () => {
     }
   }, [selectedVehicleId]);
 
+  const fitMapBounds = () => {
+    const map = mapInstance.current;
+    if (!map) return;
+
+    const coords: L.LatLngExpression[] = [];
+    vehicles.forEach(v => coords.push([v.gps.latitude, v.gps.longitude]));
+    warehouses.forEach(w => coords.push([w.location.lat, w.location.lng]));
+
+    if (coords.length > 0) {
+      const bounds = L.latLngBounds(coords);
+      map.fitBounds(bounds, { padding: [50, 50] });
+    } else {
+      map.setView([39.8283, -98.5795], 4);
+    }
+  };
+
   const idleCount = vehicles.filter(v => v.status === 'idle').length;
   const transitCount = vehicles.filter(v => v.status === 'in-transit').length;
   const maintCount = vehicles.filter(v => v.status === 'maintenance').length;
@@ -210,12 +231,18 @@ export const MapView: React.FC = () => {
     <div className="relative w-full h-[55vh] rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl glass-panel">
       <div ref={mapRef} className="w-full h-full" />
       
-      {/* Top-Left: Live Badge */}
+      {/* Top-Left: Live Badge & Fit View */}
       <div className="absolute top-4 left-14 z-[400] flex items-center space-x-2">
         <div className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[10px] font-bold text-slate-300 shadow-lg flex items-center space-x-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <span>Digital Twin Live</span>
         </div>
+        <button 
+          onClick={fitMapBounds}
+          className="px-2.5 py-1.5 rounded-xl bg-slate-950/85 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-[10px] font-black uppercase tracking-wider text-blue-400 hover:text-blue-300 shadow-lg flex items-center space-x-1 transition-all"
+        >
+          <span>Fit View</span>
+        </button>
       </div>
 
       {/* Top-Right: Fleet Stats HUD */}

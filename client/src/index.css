@@ -334,3 +334,87 @@
   outline: 2px solid rgba(59, 130, 246, 0.6);
   outline-offset: 2px;
 }
+
+/* ============================================
+   INDIAN COLOR THEMES ENGINE
+   ============================================ */
+
+/* 1. Saffron Glow (Vibrant Saffron Accent) */
+body.theme-saffron {
+  --color-brand: 249 115 22; /* Saffron Orange RGB */
+}
+body.theme-saffron .text-blue-400,
+body.theme-saffron .text-blue-500,
+body.theme-saffron .text-blue-600 {
+  color: #f97316 !important;
+}
+body.theme-saffron .bg-blue-600,
+body.theme-saffron .bg-blue-500,
+body.theme-saffron .bg-blue-700 {
+  background-color: #f97316 !important;
+}
+body.theme-saffron .border-blue-500,
+body.theme-saffron .border-blue-600 {
+  border-color: #f97316 !important;
+}
+body.theme-saffron .from-blue-600 {
+  --tw-gradient-from: #f97316 !important;
+  --tw-gradient-to: #ea580c !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+body.theme-saffron .text-gradient-blue {
+  background-image: linear-gradient(135deg, #f97316, #ea580c) !important;
+}
+
+/* 2. Tri-Color Pride (Saffron, White, Emerald Theme) */
+body.theme-tricolor {
+  --color-brand: 16 185 129; /* Emerald Green RGB */
+}
+body.theme-tricolor .text-blue-400,
+body.theme-tricolor .text-blue-500 {
+  color: #f97316 !important; /* Saffron header highlights */
+}
+body.theme-tricolor .text-blue-600 {
+  color: #10b981 !important; /* Emerald primary texts */
+}
+body.theme-tricolor .bg-blue-600,
+body.theme-tricolor .bg-blue-500 {
+  background-color: #10b981 !important; /* Emerald actions */
+}
+body.theme-tricolor .border-blue-500 {
+  border-color: #f97316 !important;
+}
+body.theme-tricolor .from-blue-600 {
+  --tw-gradient-from: #f97316 !important; /* Saffron to Emerald Gradient */
+  --tw-gradient-to: #10b981 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+body.theme-tricolor .text-gradient-blue {
+  background-image: linear-gradient(135deg, #f97316, #10b981) !important;
+}
+
+/* 3. Royal Indigo & Gold (Traditional Indian Festivity Colors) */
+body.theme-royal {
+  --color-brand: 217 119 6; /* Royal Gold RGB */
+}
+body.theme-royal .text-blue-400,
+body.theme-royal .text-blue-500,
+body.theme-royal .text-blue-600 {
+  color: #eab308 !important; /* Gold text */
+}
+body.theme-royal .bg-blue-600,
+body.theme-royal .bg-blue-500 {
+  background-color: #6366f1 !important; /* Indigo background buttons */
+}
+body.theme-royal .border-blue-500 {
+  border-color: #eab308 !important;
+}
+body.theme-royal .from-blue-600 {
+  --tw-gradient-from: #6366f1 !important;
+  --tw-gradient-to: #eab308 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+body.theme-royal .text-gradient-blue {
+  background-image: linear-gradient(135deg, #6366f1, #eab308) !important;
+}
+

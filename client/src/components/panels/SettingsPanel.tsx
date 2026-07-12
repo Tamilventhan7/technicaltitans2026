@@ -6,7 +6,7 @@ import {
 import { useApp } from '../../context/AppContext';
 
 export const SettingsPanel: React.FC = () => {
-  const { role, resetDatabase, language, setLanguage } = useApp();
+  const { role, resetDatabase, language, setLanguage, theme, setTheme, setRole, login, user } = useApp();
 
   // Form states
   const [orgName, setOrgName] = useState('TransitOps Global Carriers');
@@ -65,12 +65,12 @@ export const SettingsPanel: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-[10px] text-slate-400 uppercase tracking-widest">HQ Location Zone</label>
                   <input 
                     type="text"
-                    defaultValue="Chicago Terminal Hub"
+                    defaultValue="Mumbai Logistics Hub"
                     className="w-full bg-slate-950 border border-slate-850 focus:border-blue-500/30 rounded-xl p-3 text-slate-200 text-xs font-bold focus:outline-none"
                   />
                 </div>
@@ -85,6 +85,20 @@ export const SettingsPanel: React.FC = () => {
                     <option value="en">English (US)</option>
                     <option value="hi">Hindi (हिन्दी)</option>
                     <option value="ta">Tamil (தமிழ்)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] text-slate-400 uppercase tracking-widest">Vibrant Color Theme</label>
+                  <select 
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value as any)}
+                    className="w-full bg-slate-950 border border-slate-850 focus:border-blue-500/30 rounded-xl p-3 text-slate-200 text-xs font-bold focus:outline-none cursor-pointer"
+                  >
+                    <option value="indigo">Default Indigo Glow</option>
+                    <option value="saffron">Saffron Glow (Indian Orange)</option>
+                    <option value="tricolor">Tri-Color Pride (Saffron & Emerald)</option>
+                    <option value="royal">Royal Gold & Indigo (Traditional Gold)</option>
                   </select>
                 </div>
               </div>
@@ -117,6 +131,48 @@ export const SettingsPanel: React.FC = () => {
                 <span>Save Settings Changes</span>
               </button>
             </form>
+          </div>
+
+          {/* Active Profile Session Switcher */}
+          <div className="glass-panel p-6.5 rounded-3xl border border-slate-850">
+            <h3 className="text-xs font-black uppercase text-slate-350 tracking-wider mb-4 border-b border-slate-850 pb-3 flex items-center space-x-2">
+              <ShieldCheck className="w-4 h-4 text-blue-400" />
+              <span>Workspace Profile Switcher</span>
+            </h3>
+
+            <div className="space-y-4">
+              <p className="text-xs text-slate-450 leading-relaxed">
+                You are currently authenticated as <span className="text-slate-200 font-bold">{user?.name || 'Portal User'}</span> with active role permissions: <span className="text-blue-400 font-bold uppercase">{role}</span>. Switch profile sessions instantly below:
+              </p>
+              <select 
+                value={role}
+                onChange={async (e) => {
+                  const selectedRole = e.target.value;
+                  const usernameMap: Record<string, string> = {
+                    'Admin': 'admin',
+                    'Dispatcher': 'dispatcher',
+                    'Driver': 'driver',
+                    'SafetyOfficer': 'safety',
+                    'FinancialAnalyst': 'finance',
+                    'FleetManager': 'manager'
+                  };
+                  const usernameKey = usernameMap[selectedRole] || 'admin';
+                  try {
+                    await login(usernameKey);
+                  } catch (err: any) {
+                    alert('Profile switch failed: ' + err.message);
+                  }
+                }}
+                className="w-full bg-slate-950 border border-slate-850 focus:border-blue-500/30 rounded-xl p-3 text-slate-200 text-xs font-bold focus:outline-none cursor-pointer"
+              >
+                <option value="Admin">System Administrator (Admin View)</option>
+                <option value="Dispatcher">Dispatch Operations Lead (Dispatcher View)</option>
+                <option value="Driver">Field Operator (Driver Portal)</option>
+                <option value="SafetyOfficer">Safety Compliance Lead (Safety View)</option>
+                <option value="FinancialAnalyst">Lead Financial Analyst (Finance View)</option>
+                <option value="FleetManager">Fleet Operations Manager (Manager View)</option>
+              </select>
+            </div>
           </div>
 
           {/* Org database management */}
